@@ -1,8 +1,12 @@
 #ifndef DISTANCE_H
 #define DISTANCE_H
+
+#include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 
 #include "point.h"
+
 
 /**
  * This typedef below defines the distance_func_t type, a function pointer type that groups all
