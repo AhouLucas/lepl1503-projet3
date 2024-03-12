@@ -1,7 +1,8 @@
 #ifndef PARAMS_H
 #define PARAMS_H
 
-#include <stdint.h>
+#include "common.h"
+
 #include "point.h"
 
 typedef struct {

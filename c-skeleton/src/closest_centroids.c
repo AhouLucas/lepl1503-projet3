@@ -1,6 +1,3 @@
-#include <stddef.h>
-#include <stdint.h>
-
 #include "../headers/closest_centroids.h"
 #include "../headers/point.h"
 #include "../headers/distance.h"

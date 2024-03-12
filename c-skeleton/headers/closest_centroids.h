@@ -2,10 +2,7 @@
 #define CLOSEST_CENTROIDS_H
 
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stddef.h>
+#include "common.h"
 
 #include "point.h"
 #include "distance.h"

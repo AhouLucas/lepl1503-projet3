@@ -1,7 +1,7 @@
 #ifndef BINARY_PARSE_H
 #define BINARY_PARSE_H
 
-#include <stdint.h>
+#include "common.h"
 #include "point.h"
 #include "params.h"
 
