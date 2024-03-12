@@ -1,10 +1,7 @@
 #ifndef UPDATE_CENTROIDS_H
 #define UPDATE_CENTROIDS_H
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stddef.h>
+#include "common.h"
 
 #include "point.h"
 
