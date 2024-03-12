@@ -1,9 +1,7 @@
 #ifndef DISTANCE_H
 #define DISTANCE_H
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
+#include "common.h"
 
 #include "point.h"
 
