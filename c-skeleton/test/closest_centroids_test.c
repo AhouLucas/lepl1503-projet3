@@ -1,4 +1,4 @@
-#include <common.h>
+#include "../headers/common.h"
 #include <CUnit/Basic.h>
 #include <CUnit/CUnit.h>
 
@@ -85,11 +85,11 @@ int init_closest_centroids_suite(void) {
     point_t c3 = {dimension, (int64_t[]){-1, 1}, 0};
 
     // Creates 5 points
-    point_t p1 = {dimension, (int64_t[]){0, -1}, 0}; // Belongs to c1
-    point_t p2 = {dimension, (int64_t[]){2, 2}, 0}; // Belongs to c2
-    point_t p3 = {dimension, (int64_t[]){-2, 1}, 0}; // Belongs to c3
-    point_t p4 = {dimension, (int64_t[]){0, -2}, 0}; // Belongs to c1
-    point_t p5 = {dimension, (int64_t[]){0, 1}, 0}; // Equidistant to every centroid, so it should belong to c1
+    point_t p1 = {dimension, (int64_t[]){0, -1}, 1}; // Belongs to c1
+    point_t p2 = {dimension, (int64_t[]){2, 2}, 1}; // Belongs to c2
+    point_t p3 = {dimension, (int64_t[]){-2, 1}, 1}; // Belongs to c3
+    point_t p4 = {dimension, (int64_t[]){0, -2}, 1}; // Belongs to c1
+    point_t p5 = {dimension, (int64_t[]){0, 1}, 1}; // Equidistant to every centroid, so it should belong to c1
 
     centroids[0] = c1;
     centroids[1] = c2;
@@ -116,6 +116,7 @@ int clean_closest_centroids_suite(void) {
 
 void test_closest_centroids(void) {
     CU_ASSERT_EQUAL(closest_centroid(centroids, points, k, num_points, squared_distance_function), 1);
+    printf("\n Centroids of first point : %d\n", points[0].clusterID);
     CU_ASSERT_EQUAL(points[0].clusterID, 0);
     CU_ASSERT_EQUAL(points[1].clusterID, 1);
     CU_ASSERT_EQUAL(points[2].clusterID, 2);
