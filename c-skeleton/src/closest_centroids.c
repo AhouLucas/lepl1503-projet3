@@ -23,10 +23,10 @@ int closest_centroid(point_t* centroids, point_t *points, int k, int num_points,
             if(dist < minDistance) {    // Update point clusterID if it's closer 
                 p->clusterID = (uint32_t) centroidIndex;
                 minDistance = dist;
-                if(p->clusterID != oldClusterID) {
-                    changed = 1;
-                }
             }
+        }
+        if(p->clusterID != oldClusterID) {
+            changed = 1;
         }
     }
 
