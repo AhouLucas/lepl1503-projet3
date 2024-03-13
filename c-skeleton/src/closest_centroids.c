@@ -9,11 +9,6 @@ int closest_centroid(point_t* centroids, point_t *points, int k, int num_points,
         return -1;
     }
 
-    // Check if k and num_points are the same size as the arrays
-    if(k != sizeof(centroids) / sizeof(centroids[0]) || num_points != sizeof(points) / sizeof(points[0])){
-        return -1;
-    }
-
     int changed = 0;
     
     for(int i = 0; i < num_points; i++) {   // For each point
