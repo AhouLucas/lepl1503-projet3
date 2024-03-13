@@ -6,11 +6,6 @@ int update_centroids(point_t* centroids, point_t* points, int k, int num_points)
     if(points == NULL||centroids == NULL || k < 0 || num_points < 0) {
         return -1;
     }
-
-    if(k != sizeof(centroids) / sizeof(centroids[0]) || num_points != sizeof(points) / sizeof(points[0])){
-        return -1;
-    }
-
     int changed = 0;
     int32_t dim = points->dimension;
     uint32_t* clusters = (uint32_t*)malloc(k*sizeof(uint32_t));

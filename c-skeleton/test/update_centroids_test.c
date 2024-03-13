@@ -22,6 +22,7 @@ int wrong(void) {
     if(centroids == NULL || points == NULL) {
         return -1;
     }
+    return 0;
 }
 
 void test_wrong_input(void){
@@ -29,8 +30,6 @@ void test_wrong_input(void){
     CU_ASSERT_EQUAL(update_centroids(centroids, NULL, k, num_points), -1);
     CU_ASSERT_EQUAL(update_centroids(centroids, points, -1, num_points), -1);
     CU_ASSERT_EQUAL(update_centroids(centroids, points, k, -1), -1);
-    CU_ASSERT_EQUAL(update_centroids(centroids, points, k+1, num_points), -1);
-    CU_ASSERT_EQUAL(update_centroids(centroids, points, k, num_points+1), -1);
 }
 
 int clean(void) {
@@ -69,6 +68,8 @@ int right(void){
     points[3] = p4;
     points[4] = p5;
     points[5] = p6;
+
+    return 0;
 }
 
 void test_classic(void){
@@ -84,12 +85,12 @@ void test_classic(void){
 
 void test_no_change(void){
     CU_ASSERT_EQUAL(update_centroids(centroids, points, k, num_points), 0);
-    CU_ASSERT_EQUAL(centroids[0].coordinates[0], (int64_t)1);
-    CU_ASSERT_EQUAL(centroids[0].coordinates[1], (int64_t)-2);
-    CU_ASSERT_EQUAL(centroids[1].coordinates[0], (int64_t)2);
-    CU_ASSERT_EQUAL(centroids[1].coordinates[1], (int64_t)1);
-    CU_ASSERT_EQUAL(centroids[2].coordinates[0], (int64_t)-2);
-    CU_ASSERT_EQUAL(centroids[2].coordinates[1], (int64_t)2);
+    CU_ASSERT_EQUAL(centroids[0].coordinates[0], 1);
+    CU_ASSERT_EQUAL(centroids[0].coordinates[1], -2);
+    CU_ASSERT_EQUAL(centroids[1].coordinates[0], 2);
+    CU_ASSERT_EQUAL(centroids[1].coordinates[1], 1);
+    CU_ASSERT_EQUAL(centroids[2].coordinates[0], -2);
+    CU_ASSERT_EQUAL(centroids[2].coordinates[1], 2);
 }
 
 int main(){
@@ -114,8 +115,8 @@ int main(){
 
     if (
         (NULL == CU_add_test(wrong_input, "Test wrong inputs", test_wrong_input)) ||
-        (NULL == CU_add_test(test, "Test update centroids", test_classic)) ||
-        (NULL == CU_add_test(test, "Test closest centroids no change", test_no_change))
+        (NULL == CU_add_test(test, "Test classic", test_classic)) ||
+        (NULL == CU_add_test(test, "Test no change", test_no_change))
     ) {
         CU_cleanup_registry();
         return CU_get_error();
