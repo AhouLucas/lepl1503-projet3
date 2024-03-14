@@ -37,7 +37,7 @@ params_t* binary_parse(FILE *file) {
     }
     parameters->points_list = points;
 
-    int offset = 0;
+    uint64_t offset = 0;
     while(offset < n) {
         point_t point;
         int64_t* coordinates = (int64_t*) malloc(dim * sizeof(int64_t));
@@ -48,7 +48,7 @@ params_t* binary_parse(FILE *file) {
             return NULL;
         }
 
-        int i = 0;
+        uint32_t i = 0;
         while(i<dim) {
             coordinates[i] = (int64_t) be64toh((uint64_t) coordinates[i]);
             i++;
@@ -67,7 +67,7 @@ params_t* binary_parse(FILE *file) {
 
 void free_params_struct(params_t* parameters) {
     uint64_t n = parameters->npoints;
-    int i = 0;
+    uint64_t i = 0;
     while(i < n) {
         free(parameters->points_list[i].coordinates);
         i++;
