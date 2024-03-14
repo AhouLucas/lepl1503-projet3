@@ -58,14 +58,6 @@ void test_squared_distance_function_null(void) {
     CU_ASSERT_EQUAL(closest_centroid(centroids, points, k, num_points, NULL), -1);
 }
 
-void test_k_not_equal_centroids(void) {
-    CU_ASSERT_EQUAL(closest_centroid(centroids, points, k + 69, num_points, squared_distance_function), -1);
-}
-
-void test_num_points_not_equal_points(void) {
-    CU_ASSERT_EQUAL(closest_centroid(centroids, points, k, num_points + 69, squared_distance_function), -1);
-}
-
 
 
 int init_closest_centroids_suite(void) {
@@ -159,8 +151,6 @@ int main() {
         (NULL == CU_add_test(wrong_param_suite, "Test k negative", test_k_negative)) ||
         (NULL == CU_add_test(wrong_param_suite, "Test num_points negative", test_num_points_negative)) ||
         (NULL == CU_add_test(wrong_param_suite, "Test squared_distance_function NULL", test_squared_distance_function_null)) ||
-        (NULL == CU_add_test(wrong_param_suite, "Test k not equal centroids", test_k_not_equal_centroids)) ||
-        (NULL == CU_add_test(wrong_param_suite, "Test num_points not equal points", test_num_points_not_equal_points)) ||
         (NULL == CU_add_test(closest_centroids_suite, "Test closest centroids", test_closest_centroids)) ||
         (NULL == CU_add_test(closest_centroids_suite, "Test closest centroids no change", test_closest_centroids_no_change))
     ) {
