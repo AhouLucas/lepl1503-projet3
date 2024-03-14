@@ -1,20 +1,22 @@
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
+#include <inttypes.h>
 
 #include "../headers/common.h"
 #include "../headers/update_centroids.h"
 
-point_t* centroids;
+point_t* centroids; 
+point_t* centroids2;
 point_t* points;
 int32_t dimension;
 int k;
 int num_points;
 
-point_t c1, c2, c3;
+point_t c1, c2, c3, c4;
 point_t p1, p2, p3, p4, p5, p6;
 
-int wrong(void) {
-    k = 3;
+int init_wrong(void) {
+    k = 4;
     num_points = 6;
     dimension = 2;
     centroids = (point_t*) malloc(k * sizeof(point_t));
@@ -38,8 +40,8 @@ int clean(void) {
     return 0;
 }
 
-int right(void){
-    k = 3;
+int init_right(void){
+    k = 4;
     num_points = 6;
     dimension = 2;
     centroids = (point_t*) malloc(k * sizeof(point_t));
@@ -47,9 +49,16 @@ int right(void){
     if(centroids == NULL || points == NULL) {
         return -1;
     }
+    return 0;
+}
+
+
+void test_classic(void){
+    
     point_t c1 = {dimension, (int64_t[]){0, -1}, 0};
     point_t c2 = {dimension, (int64_t[]){1, 1}, 1};
     point_t c3 = {dimension, (int64_t[]){-1, 1}, 2};
+    point_t c4 = {dimension, (int64_t[]){-5, -5}, 3}; //empty cluster
 
     point_t p1 = {dimension, (int64_t[]){2, -2}, 0};
     point_t p2 = {dimension, (int64_t[]){2, 2}, 1};
@@ -61,6 +70,7 @@ int right(void){
     centroids[0] = c1;
     centroids[1] = c2;
     centroids[2] = c3;
+    centroids[3] = c4;
 
     points[0] = p1;
     points[1] = p2;
@@ -68,11 +78,6 @@ int right(void){
     points[3] = p4;
     points[4] = p5;
     points[5] = p6;
-
-    return 0;
-}
-
-void test_classic(void){
     CU_ASSERT_EQUAL(update_centroids(centroids, points, k, num_points), 1);
     CU_ASSERT_EQUAL(centroids[0].coordinates[0], 1);
     CU_ASSERT_EQUAL(centroids[0].coordinates[1], -2);
@@ -80,10 +85,36 @@ void test_classic(void){
     CU_ASSERT_EQUAL(centroids[1].coordinates[1], 1);
     CU_ASSERT_EQUAL(centroids[2].coordinates[0], -2);
     CU_ASSERT_EQUAL(centroids[2].coordinates[1], 2);
+    CU_ASSERT_EQUAL(centroids[3].coordinates[0], -5);
+    CU_ASSERT_EQUAL(centroids[3].coordinates[1], -5);
+
 
 }
 
 void test_no_change(void){
+    point_t c1 = {dimension, (int64_t[]){1, -2}, 0};
+    point_t c2 = {dimension, (int64_t[]){2, 1}, 1};
+    point_t c3 = {dimension, (int64_t[]){-2, 2}, 2};
+    point_t c4 = {dimension, (int64_t[]){-5, -5}, 3}; //empty cluster
+
+    point_t p1 = {dimension, (int64_t[]){2, -2}, 0};
+    point_t p2 = {dimension, (int64_t[]){2, 2}, 1};
+    point_t p3 = {dimension, (int64_t[]){-2, 1}, 2};
+    point_t p4 = {dimension, (int64_t[]){0, -2}, 0};
+    point_t p5 = {dimension, (int64_t[]){2, 0}, 1};
+    point_t p6 = {dimension, (int64_t[]){-2, 3}, 2};
+
+    centroids[0] = c1;
+    centroids[1] = c2;
+    centroids[2] = c3;
+    centroids[3] = c4;
+
+    points[0] = p1;
+    points[1] = p2;
+    points[2] = p3;
+    points[3] = p4;
+    points[4] = p5;
+    points[5] = p6;
     CU_ASSERT_EQUAL(update_centroids(centroids, points, k, num_points), 0);
     CU_ASSERT_EQUAL(centroids[0].coordinates[0], 1);
     CU_ASSERT_EQUAL(centroids[0].coordinates[1], -2);
@@ -91,23 +122,27 @@ void test_no_change(void){
     CU_ASSERT_EQUAL(centroids[1].coordinates[1], 1);
     CU_ASSERT_EQUAL(centroids[2].coordinates[0], -2);
     CU_ASSERT_EQUAL(centroids[2].coordinates[1], 2);
+    CU_ASSERT_EQUAL(centroids[3].coordinates[0], -5);
+    CU_ASSERT_EQUAL(centroids[3].coordinates[1], -5);
 }
+
 
 int main(){
     CU_pSuite wrong_input = NULL;
     CU_pSuite test = NULL;
+    CU_pSuite no_change = NULL;
 
     if (CUE_SUCCESS != CU_initialize_registry()) {
         return CU_get_error();
     }
 
-    wrong_input = CU_add_suite("Wrong input", wrong, clean);
+    wrong_input = CU_add_suite("Wrong input", init_wrong, clean);
     if (NULL == wrong_input) {
         CU_cleanup_registry();
         return CU_get_error();
     }
 
-    test = CU_add_suite("Right input", right, clean);
+    test = CU_add_suite("Right input", init_right, clean);
     if (NULL == test) {
         CU_cleanup_registry();
         return CU_get_error();
