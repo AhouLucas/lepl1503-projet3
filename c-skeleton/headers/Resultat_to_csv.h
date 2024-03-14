@@ -2,11 +2,9 @@
 #define RESULTAT_TO_CSV
 
 #include "common.h"
+#include "point.h"
 
-typedef struct {
-    int64_t x;
-    int64_t y;
-} tuple_t;
+
 
 /**
  * @brief Return a csv file in correct format 
@@ -22,6 +20,6 @@ typedef struct {
  * @return int -1 if an error occurred, 0 if no file could be created, 1 if the file have been correctly intialised 
  */
 
-int write_to_csv(const char *filename, tuple_t *initial_centroids, int distortion, tuple_t *final_centroids, tuple_t ***clusters, int num_clusters);
+int write_to_csv(const char *filename, point_t *initial_centroids, int distortion, point_t *final_centroids, point_t ***clusters, int num_clusters);
 
 #endif 

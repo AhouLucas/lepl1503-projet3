@@ -6,15 +6,15 @@
 
 
 
-int write_to_csv(const char *filename, tuple_t *initial_centroids, int distortion, tuple_t *final_centroids, tuple_t ***clusters, int num_clusters) {
-    FILE *output_file = fopen(filename, "w"); // Ouvre le fichier en écriture (crée le fichier s'il n'existe pas)
+int write_to_csv(const char *filename, point_t *initial_centroids, int distortion, point_t *final_centroids, point_t ***clusters, int num_clusters) {
+    FILE *output_file = fopen(filename, "w"); 
 
     if (output_file == NULL) {
         perror("Erreur lors de l'ouverture du fichier");
         return 1;
     }
 
-    // Écriture de l'en-tête
+    
     fprintf(output_file, "initialization centroids,distortion,centroids");
     if (num_clusters > 0)
         fprintf(output_file, ",clusters");
@@ -24,20 +24,38 @@ int write_to_csv(const char *filename, tuple_t *initial_centroids, int distortio
     // Écriture des lignes de données
     for (int i = 0; i < num_clusters; i++) {
         // Écriture des centroides d'initialisation
-        fprintf(output_file, "\"[(%ld, %ld)]\",", initial_centroids[i].x, initial_centroids[i].y);
+        fprintf(output_file, "\"[");
+        for (uint32_t j = 0; j < initial_centroids[i].dimension; j++) {
+            fprintf(output_file, "%ld", initial_centroids[i].coordinates[j]);
+            if (j != initial_centroids[i].dimension - 1)
+                fprintf(output_file, ", ");
+        }
+        fprintf(output_file, "]\",");
 
         // Écriture de la distortion
         fprintf(output_file, "%d,", distortion);
 
         // Écriture des centroides finaux
-        fprintf(output_file, "\"[(%ld, %ld)]\"", final_centroids[i].x, final_centroids[i].y);
+        fprintf(output_file, "\"[");
+        for (uint32_t j = 0; j < final_centroids[i].dimension; j++) {
+            fprintf(output_file, "%ld", final_centroids[i].coordinates[j]);
+            if (j != final_centroids[i].dimension - 1)
+                fprintf(output_file, ", ");
+        }
+        fprintf(output_file, "]\"");
 
         // Écriture des clusters
         if (num_clusters > 0) {
             fprintf(output_file, ",");
             fprintf(output_file, "\"[");
             for (int j = 0; j < num_clusters; j++) {
-                fprintf(output_file, "[(%ld, %ld)]", (*clusters)[i][j].x, (*clusters)[i][j].y);
+                fprintf(output_file, "[");
+                for (uint32_t k = 0; k < (*clusters)[i][j].dimension; k++) {
+                    fprintf(output_file, "%ld", (*clusters)[i][j].coordinates[k]);
+                    if (k != (*clusters)[i][j].dimension - 1)
+                        fprintf(output_file, ", ");
+                }
+                fprintf(output_file, "]");
                 if (j != num_clusters - 1)
                     fprintf(output_file, ", ");
             }
@@ -48,10 +66,5 @@ int write_to_csv(const char *filename, tuple_t *initial_centroids, int distortio
     }
     fclose(output_file); // Ferme le fichier
 
-    
-     // Ferme le fichier
-    return 0 ; 
+    return 0;
 }
-
-
-

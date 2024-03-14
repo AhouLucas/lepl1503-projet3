@@ -4,26 +4,41 @@
 
 #include "../headers/resultat_to_csv.h"
 #include "../headers/common.h"
+#include "../headers/point.h"
 
 
-tuple_t* initial_centroids ; 
+point_t *initial_centroids;
 int distortion = 10;
-tuple_t* final_centroids ; 
-tuple_t **clusters; 
+point_t *final_centroids ; 
+point_t **clusters;
 int num_clusters ;
 
 void Correct_execution() {
-    tuple_t initial_centroids[] = {{1, 2}, {3, 4}};
-    int distortion = 5;
-    tuple_t final_centroids[] = {{6, 7}, {8, 9}};
-    tuple_t **clusters = malloc(2 * sizeof(tuple_t *));
-    clusters[0] = malloc(2 * sizeof(tuple_t));
-    clusters[1] = malloc(2 * sizeof(tuple_t));
-    clusters[0][0] = (tuple_t){10, 11};
-    clusters[0][1] = (tuple_t){12, 13};
-    clusters[1][0] = (tuple_t){14, 15};
-    clusters[1][1] = (tuple_t){16, 17};
-    int num_clusters = 2;
+    const char *filename = "output.csv"; // Nom du fichier de sortie
+
+    point_t initial_centroids[] = {
+        {.dimension = 2, .coordinates = (int64_t[]){2, 2}},
+        {.dimension = 2, .coordinates = (int64_t[]){3, 4}},
+        {.dimension = 2, .coordinates = (int64_t[]){5, 6}}
+    };
+    int distortion = 10;
+    point_t final_centroids[] = {
+        {.dimension = 2, .coordinates = (int64_t[]){7, 8}},
+        {.dimension = 2, .coordinates = (int64_t[]){9, 10}},
+        {.dimension = 2, .coordinates = (int64_t[]){11, 12}}
+    };
+    point_t **clusters;
+    int num_clusters = 3;
+
+    // Allocation et initialisation de clusters (à des fins de démonstration)
+    clusters = malloc(num_clusters * sizeof(point_t *));
+    for (int i = 0; i < num_clusters; i++) {
+        clusters[i] = malloc(num_clusters * sizeof(point_t));
+        for (int j = 0; j < num_clusters; j++) {
+            clusters[i][j].dimension = 2;
+            clusters[i][j].coordinates = (int64_t[]){i * num_clusters + j, i * num_clusters + j + 1};
+        }
+    }
     
     // Exécuter la fonction à tester
     int result = write_to_csv("test_output.csv", initial_centroids, distortion, final_centroids, &clusters, num_clusters);
@@ -31,10 +46,13 @@ void Correct_execution() {
     // Vérifier le résultat
     CU_ASSERT_EQUAL(result, 0);
 
-    // Nettoyer les ressources allouées
-    free(clusters[0]);
-    free(clusters[1]);
+    for (int i = 0; i < num_clusters; i++) {
+        free(clusters[i]);
+    }
+    
     free(clusters);
+
+    
 }
 
 int main() {
