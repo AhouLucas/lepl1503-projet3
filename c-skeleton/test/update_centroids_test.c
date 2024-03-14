@@ -88,33 +88,7 @@ void test_classic(void){
     CU_ASSERT_EQUAL(centroids[3].coordinates[0], -5);
     CU_ASSERT_EQUAL(centroids[3].coordinates[1], -5);
 
-
-}
-
-void test_no_change(void){
-    point_t c1 = {dimension, (int64_t[]){1, -2}, 0};
-    point_t c2 = {dimension, (int64_t[]){2, 1}, 1};
-    point_t c3 = {dimension, (int64_t[]){-2, 2}, 2};
-    point_t c4 = {dimension, (int64_t[]){-5, -5}, 3}; //empty cluster
-
-    point_t p1 = {dimension, (int64_t[]){2, -2}, 0};
-    point_t p2 = {dimension, (int64_t[]){2, 2}, 1};
-    point_t p3 = {dimension, (int64_t[]){-2, 1}, 2};
-    point_t p4 = {dimension, (int64_t[]){0, -2}, 0};
-    point_t p5 = {dimension, (int64_t[]){2, 0}, 1};
-    point_t p6 = {dimension, (int64_t[]){-2, 3}, 2};
-
-    centroids[0] = c1;
-    centroids[1] = c2;
-    centroids[2] = c3;
-    centroids[3] = c4;
-
-    points[0] = p1;
-    points[1] = p2;
-    points[2] = p3;
-    points[3] = p4;
-    points[4] = p5;
-    points[5] = p6;
+    //test if centroids are already in the center
     CU_ASSERT_EQUAL(update_centroids(centroids, points, k, num_points), 0);
     CU_ASSERT_EQUAL(centroids[0].coordinates[0], 1);
     CU_ASSERT_EQUAL(centroids[0].coordinates[1], -2);
@@ -124,6 +98,8 @@ void test_no_change(void){
     CU_ASSERT_EQUAL(centroids[2].coordinates[1], 2);
     CU_ASSERT_EQUAL(centroids[3].coordinates[0], -5);
     CU_ASSERT_EQUAL(centroids[3].coordinates[1], -5);
+
+
 }
 
 
@@ -150,8 +126,7 @@ int main(){
 
     if (
         (NULL == CU_add_test(wrong_input, "Test wrong inputs", test_wrong_input)) ||
-        (NULL == CU_add_test(test, "Test classic", test_classic)) ||
-        (NULL == CU_add_test(test, "Test no change", test_no_change))
+        (NULL == CU_add_test(test, "Test classic", test_classic))
     ) {
         CU_cleanup_registry();
         return CU_get_error();
