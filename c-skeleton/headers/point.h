@@ -4,7 +4,7 @@
 #include "common.h"
 
 typedef struct {
-    int32_t dimension;
+    uint32_t dimension;
     int64_t* coordinates;
     uint32_t clusterID;
 } point_t;
