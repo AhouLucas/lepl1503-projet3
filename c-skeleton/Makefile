@@ -1,20 +1,43 @@
 CC=gcc
-CFLAGS=-Wall -Werror -g
-LIBS=-lcunit -lpthread
+CFLAGS=-Wall -Werror -O3
+LIBS=-lcunit
+
+SRC_DIR=src
+TEST_DIR=test
+BUILD_DIR=build
+TEST_BUILD_DIR=build_test
 INCLUDE_HEADERS_DIRECTORY=-Iheaders
 
-kmeans: main.c src/distance.o     # add your other object files needed to compile your program here. !! The ordering is important !! if file_a.o depends on file_b.o, file_a.o must be placed BEFORE file_b.o in the list !
-	$(CC) $(INCLUDE_HEADERS_DIRECTORY) $(CFLAGS) -o $@ $^ $(LIBS)    # this will run the following command: gcc -Wall -Werror -g -o kmeans src/distance.o other_object_filespresent_above.o ... -lcunit -lpthread
+SOURCES=$(wildcard $(SRC_DIR)/*.c)
+OBJECTS=$(SOURCES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+TEST_SOURCES=$(wildcard $(TEST_DIR)/*.c)
+TESTS=$(TEST_SOURCES:$(TEST_DIR)/%.c=$(TEST_BUILD_DIR)/%)
 
-%.o: %.c                  # if for example you want to compute example.c this will create an object file called example.o in the same directory as example.c. Don't forget to clean it in your "make clean"
+TARGET=kmeans
+
+all: $(TARGET)
+
+$(TARGET): main.c $(OBJECTS)
+	$(CC) $(INCLUDE_HEADERS_DIRECTORY) $(CFLAGS) -o $@ $^ $(LIBS)
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(BUILD_DIR)
 	$(CC) $(INCLUDE_HEADERS_DIRECTORY) $(CFLAGS) -o $@ -c $<
 
+$(TEST_BUILD_DIR)/%: $(TEST_DIR)/%.c $(OBJECTS)
+	@mkdir -p $(TEST_BUILD_DIR)
+	$(CC) $(INCLUDE_HEADERS_DIRECTORY) $(CFLAGS) -o $@ $^ $(LIBS)
+
+# Replace with: kmeans $(TESTS) when every test compiles
+tests: kmeans build_test/closest_centroids_test build_test/distance_test
+	for test in $(TEST_BUILD_DIR)/*; do \
+	    echo -e "\n\033[1;32mRunning $$test:\033[0m"; \
+		$$test; \
+	done
+
 clean:
-	rm -f src/*.o
-	rm -f kmeans
+	rm -rf $(BUILD_DIR)
+	rm -rf $(TEST_BUILD_DIR)
+	rm -f $(TARGET)
 
-tests: kmeans
-	echo "TODO !"
-
-# a .PHONY target forces make to execute the command even if the target already exists
-.PHONY: clean tests
+.PHONY: all clean tests

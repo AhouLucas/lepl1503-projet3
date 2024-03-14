@@ -22,6 +22,6 @@ typedef struct {
  * @return int -1 if an error occurred, 0 if no file could be created, 1 if the file have been correctly intialised 
  */
 
-void write_to_csv(FILE *output_file, tuple_t *initial_centroids, int distortion, tuple_t *final_centroids, tuple_t ***clusters, int num_clusters) {
+void write_to_csv(FILE *output_file, tuple_t *initial_centroids, int distortion, tuple_t *final_centroids, tuple_t ***clusters, int num_clusters);
 
 #endif 
