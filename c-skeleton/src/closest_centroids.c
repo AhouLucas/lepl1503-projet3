@@ -14,11 +14,11 @@ int closest_centroid(point_t* centroids, point_t *points, int k, int num_points,
     for(int i = 0; i < num_points; i++) {   // For each point
         point_t *p = &points[i];
         uint32_t oldClusterID = p->clusterID;  // Remember the old centroid to know if it has changed
-        int64_t minDistance = INT64_MAX;
+        uint64_t minDistance = UINT64_MAX;
 
         for(int centroidIndex = 0; centroidIndex < k; centroidIndex++) {   // For each centroid
             point_t *c = &centroids[centroidIndex];
-            int64_t dist = squared_distance_function(p, c); // Compute the distance between the current point and current centroid
+            uint64_t dist = squared_distance_function(p, c); // Compute the distance between the current point and current centroid
 
             if(dist < minDistance) {    // Update point clusterID if it's closer 
                 p->clusterID = (uint32_t) centroidIndex;

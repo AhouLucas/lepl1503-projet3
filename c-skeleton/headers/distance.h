@@ -24,16 +24,16 @@
  *      int64_t dist = generic_func(a, b); // computes either the manhattan distance or the euclidean distance depending on the some_condition
  *
  */
-typedef int64_t (*squared_distance_func_t) (const point_t *, const point_t *);
+typedef uint64_t (*squared_distance_func_t) (const point_t *, const point_t *);
 
 /**
  * @return the squared manhattan distance between 2 points
  */
-int64_t squared_manhattan_distance(const point_t *, const point_t *);
+uint64_t squared_manhattan_distance(const point_t *, const point_t *);
 
 /**
  * @return the squared euclidean distance between 2 points
  */
-int64_t squared_euclidean_distance(const point_t *, const point_t *);
+uint64_t squared_euclidean_distance(const point_t *, const point_t *);
 
 #endif //DISTANCE_H
