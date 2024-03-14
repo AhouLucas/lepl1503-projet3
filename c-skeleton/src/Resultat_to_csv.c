@@ -1,17 +1,27 @@
-#include "common.h"
+#include "../headers/common.h"
 
-#include "../headers/update_centroids.h"
+
 #include "../headers/point.h"
+#include "../headers/resultat_to_csv.h"
 
 
 
-void write_to_csv(FILE *output_file, tuple_t *initial_centroids, int distortion, tuple_t *final_centroids, tuple_t ***clusters, int num_clusters) {
-   
+int write_to_csv(const char *filename, tuple_t *initial_centroids, int distortion, tuple_t *final_centroids, tuple_t ***clusters, int num_clusters) {
+    FILE *output_file = fopen(filename, "w"); // Ouvre le fichier en écriture (crée le fichier s'il n'existe pas)
+
+    if (output_file == NULL) {
+        perror("Erreur lors de l'ouverture du fichier");
+        return 1;
+    }
+
+    // Écriture de l'en-tête
     fprintf(output_file, "initialization centroids,distortion,centroids");
     if (num_clusters > 0)
         fprintf(output_file, ",clusters");
     fprintf(output_file, "\n");
+    fprintf(output_file, "\n");
 
+    // Écriture des lignes de données
     for (int i = 0; i < num_clusters; i++) {
         // Écriture des centroides d'initialisation
         fprintf(output_file, "[(%ld, %ld)],", initial_centroids[i].x, initial_centroids[i].y);
@@ -36,6 +46,11 @@ void write_to_csv(FILE *output_file, tuple_t *initial_centroids, int distortion,
 
         fprintf(output_file, "\n");
     }
+    fclose(output_file); // Ferme le fichier
+
+    
+     // Ferme le fichier
+    return 0 ; 
 }
 
 
