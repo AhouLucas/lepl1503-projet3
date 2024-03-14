@@ -12,17 +12,7 @@
  * @param quietMode If true, the last column (which corresponds to the list of clusters) will not be written
  * @return int 0 if successful, -1 if an error occurred
  */
-int write_header_csv(FILE* csv_file, bool quietMode){
-    if(quietMode){
-        fprintf(csv_file, "initialization centroids, distortion, centroids\n");
-        return 0;
-    }
-    else{
-        fprintf(csv_file, "initialization centroids, distortion, centroids, clusters\n");
-        return 0;
-    }
-}
-
+int write_header_csv(FILE* csv_file, bool quietMode);
 /**
  * @brief Writes a line to a csv file every time it is called
  * 
@@ -31,11 +21,10 @@ int write_header_csv(FILE* csv_file, bool quietMode){
  * @param distortion Value of distortion after the last iteration
  * @param final_centroids Array of centroids after the last iteration
  * @param points Array of points which have been clustered
+ * @param quietMode If true, the last column (which corresponds to the list of clusters) will not be written
  * @return int 0 if successful, -1 if an error occurred
  */
-int write_row_csv(FILE* csv_file, point_t* initialization_centroids, uint64_t distortion, point_t* final_centroids, point_t* points){
-    return 0;
-}
+int write_row_csv(FILE* csv_file, point_t* initialization_centroids, uint64_t distortion, point_t* final_centroids, point_t* points, bool quietMode);
 
 
 #endif // CSV_WRITE
