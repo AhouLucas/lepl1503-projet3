@@ -34,11 +34,14 @@ int nmb_points = 5;
 int nmb_centroids = 3;
 int nmb_dimensions = 2;
 
-
-void init(void){
+int init(void){
 
     test_points = (point_t*) malloc(sizeof(point_t) * nmb_points); // 5 Points to test
     test_centroids = (point_t*) malloc(sizeof(point_t) * nmb_centroids); // 3 Centroids to test
+
+    if ((test_points == NULL) || (test_centroids == NULL)){
+        return -1;
+    }
 
     for (int j = 0; j < nmb_centroids; j++){
         init_point_2D(test_centroids[j],j,j,j,nmb_dimensions);    
@@ -54,7 +57,8 @@ void init(void){
         else {
             init_point_2D(test_points[i],2,i,1+i,nmb_dimensions);  //Assign centroid to each point arbitrarely (Point 4 have centroid 2)
         }
-}
+    }
+    return 0;
 }
 
 
