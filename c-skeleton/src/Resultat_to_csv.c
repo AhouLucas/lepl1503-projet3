@@ -35,7 +35,6 @@ int write_to_csv(const char *filename, point_t *initial_centroids, int distortio
         // Écriture de la distortion
         fprintf(output_file, "%d,", distortion);
 
-        // Écriture des centroides finaux
         fprintf(output_file, "\"[");
         for (uint32_t j = 0; j < final_centroids[i].dimension; j++) {
             fprintf(output_file, "%ld", final_centroids[i].coordinates[j]);
@@ -44,7 +43,6 @@ int write_to_csv(const char *filename, point_t *initial_centroids, int distortio
         }
         fprintf(output_file, "]\"");
 
-        // Écriture des clusters
         if (num_clusters > 0) {
             fprintf(output_file, ",");
             fprintf(output_file, "\"[");
