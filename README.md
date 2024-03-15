@@ -5,5 +5,5 @@
 - [x] Assign closest cluster
 - [x] k-means
 - [x] Combinations
-- [] Distorsion
-- [] Write CSV
+- [-] Distorsion
+- [-] Write CSV
