@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "common.h"
 #include "point.h"
+#include "distance.h"
 
 typedef struct {
     FILE *input_stream;
