@@ -1,7 +1,4 @@
 
-#include <CUnit/Basic.h>
-#include <CUnit/CUnit.h>
-
 #include "../headers/resultat_to_csv.h"
 #include "../headers/common.h"
 #include "../headers/point.h"
