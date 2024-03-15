@@ -1,7 +1,4 @@
-#include <CUnit/CUnit.h>
-#include <CUnit/Basic.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include "../headers/common.h"
 #include "../headers/binary_parse.h"
 
 static params_t* parameters;

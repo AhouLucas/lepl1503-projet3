@@ -1,7 +1,4 @@
-#include <stddef.h>
-#include <stdint.h>
-
-//#include "common.h"
+#include "common.h"
 #include "../headers/distance.h"
 #include "../headers/point.h"
 

@@ -1,6 +1,4 @@
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include "../headers/common.h"
 #include "../headers/point.h"
 #include "../headers/binary_parse.h"
 

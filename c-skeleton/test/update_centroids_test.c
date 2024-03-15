@@ -1,7 +1,3 @@
-#include <CUnit/CUnit.h>
-#include <CUnit/Basic.h>
-#include <inttypes.h>
-
 #include "../headers/common.h"
 #include "../headers/update_centroids.h"
 

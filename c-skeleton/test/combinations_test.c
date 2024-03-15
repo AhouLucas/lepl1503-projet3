@@ -1,5 +1,3 @@
-#include <CUnit/CUnit.h>
-#include <CUnit/Basic.h>
 #include "../headers/common.h"
 #include "../headers/combinations.h"
 

@@ -9,10 +9,9 @@ int update_centroids(point_t* centroids, point_t* points, int k, int num_points)
     
     int changed = 0;
     int32_t dim = points[0].dimension;
-    uint32_t* clusters = (uint32_t*)malloc(k*sizeof(uint32_t));
     int64_t** sumPos = (int64_t**)malloc(k*sizeof(int64_t*));
     int* pByClust = (int*)calloc(k,sizeof(int));
-    if(clusters==NULL||sumPos==NULL||pByClust==NULL){
+    if(sumPos==NULL||pByClust==NULL){
         return -1;
     }
     
@@ -23,33 +22,22 @@ int update_centroids(point_t* centroids, point_t* points, int k, int num_points)
                 free(sumPos[j]);
             }
             free(sumPos);
-            free(clusters);
             free(pByClust);
             return -1;
         }
     }
-
-    //Liste des clusters grâce aux centroids
-    for(int c = 0; c<k; c++){
-        clusters[c]=centroids[c].clusterID;
-    }
     
     //Parcourir chaque point
     for(int i = 0; i<num_points; i++){
-        //Vérifier pour chaque cluster si c'est celui du point
-        for(int clusterIndex = 0; clusterIndex<k; clusterIndex++){
-            if(points[i].clusterID==clusters[clusterIndex]){
-                //Ajouter les coordonnées du point à la somme du cluster
-                for(int eachDim = 0; eachDim<dim; eachDim++){
-                    if(sumPos[clusterIndex]==NULL){
-                    sumPos[clusterIndex][eachDim]=0;
-                    }
-                    sumPos[clusterIndex][eachDim]+=points[i].coordinates[eachDim];
-                }
-                //Augmenter le nombre de points du cluster
-                pByClust[clusterIndex]++;
+        //Ajouter les coordonnées du point à la somme du cluster
+        for(int eachDim = 0; eachDim<dim; eachDim++){
+            if(sumPos[points[i].clusterID]==NULL){
+            sumPos[points[i].clusterID][eachDim]=0;
             }
+            sumPos[points[i].clusterID][eachDim]+=points[i].coordinates[eachDim];
         }
+        //Augmenter le nombre de points du cluster
+        pByClust[points[i].clusterID]++;    
     }
 
     //Calculer le nouveau centroide
@@ -69,7 +57,6 @@ int update_centroids(point_t* centroids, point_t* points, int k, int num_points)
         free(sumPos[i]);
     }
 
-    free(clusters);
     free(sumPos);
     free(pByClust);
 
