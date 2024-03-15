@@ -15,20 +15,6 @@ uint64_t nbr_combinations(uint32_t k, uint32_t n) {
     return fact(n)/(fact(n-k)*fact(k));
 }
 
-static void copy_point2(point_t* dest, const point_t* src) {
-    uint32_t d = src->dimension;
-    dest->dimension = d;
-    dest->clusterID = src->clusterID;
-    int64_t* coord = (int64_t*) malloc(sizeof(int64_t) * d);
-    if(coord == NULL) {
-        printf("Error while copying point");
-    }
-    for(uint32_t j = 0 ; j < d ; j++) {
-        coord[j] = src->coordinates[j];
-    }
-    dest->coordinates = coord;
-}
-
 int32_t generate_all_combinations(point_t* pool, point_t* memory, uint32_t k, uint32_t n) {
     if(k > n) return -1;
     point_t pre[k];

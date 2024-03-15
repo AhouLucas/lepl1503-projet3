@@ -53,15 +53,6 @@ int teardown(void) {
     free(buffer_combinations);
 }
 
-void print_point2(point_t* p) {
-    printf("(");
-    for(uint32_t i = 0 ; i < p->dimension ; i++) {
-        printf("%ld", (p->coordinates)[i]);
-        if(i < p->dimension -1) printf(",");
-    }
-    printf(")\n");
-}
-
 void compare_points(point_t* p1, point_t* p2) {
     CU_ASSERT_TRUE(compare_point(p1, p2));
 }
