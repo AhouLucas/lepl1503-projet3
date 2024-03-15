@@ -1,3 +1,4 @@
+#include "../headers/common.h"
 #include "../headers/closest_centroids.h"
 #include "../headers/point.h"
 #include "../headers/distance.h"

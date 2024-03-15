@@ -1,7 +1,4 @@
 #include "../headers/common.h"
-#include <CUnit/Basic.h>
-#include <CUnit/CUnit.h>
-
 #include "../headers/distance.h"
 #include "../headers/closest_centroids.h"
 

@@ -1,22 +1,14 @@
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include "../headers/common.h"
 #include "../headers/point.h"
 #include "../headers/binary_parse.h"
 
-params_t* binary_parse(FILE *file) {
-    params_t* parameters = (params_t*) malloc(sizeof(params_t));
-
-    if(parameters == NULL) {
-        printf("!! Couldn't malloc for struct params_t !! \n In binary_parse");
-        return NULL;
-    }
+uint32_t binary_parse(FILE *file, params_t* parameters) {
     
     uint32_t dim = 0;
     size_t e_dimension = fread(&dim, sizeof(uint32_t), 1, file);
     if(e_dimension != 1) {
         printf("Couldn't read the dimension \n In binary_parse");
-        return NULL;
+        return 1;
     }
     dim = be32toh(dim);
     parameters->dimension = dim;
@@ -25,7 +17,7 @@ params_t* binary_parse(FILE *file) {
     size_t e_npoints = fread(&n, sizeof(uint64_t), 1, file);
     if(e_npoints != 1) {
         printf("Couldn't read the number of points \n In binary_parse");
-        return NULL;
+        return 2;
     }
     n = be64toh(n);
     parameters->npoints = n;
@@ -33,7 +25,7 @@ params_t* binary_parse(FILE *file) {
     point_t* points = (point_t*) malloc(n * sizeof(point_t));
     if(points == NULL) {
         printf("Couldn't malloc for points \n In binary_parse");
-        return NULL;
+        return 3;
     }
     parameters->points_list = points;
 
@@ -45,7 +37,7 @@ params_t* binary_parse(FILE *file) {
         size_t e_coordinates = fread(coordinates, sizeof(int64_t), dim, file);
         if(e_coordinates != dim) {
             printf("There was an error while parsing points \n In binary_parsing");
-            return NULL;
+            return 4;
         }
 
         uint32_t i = 0;
@@ -62,7 +54,7 @@ params_t* binary_parse(FILE *file) {
         offset++;
     }
     
-    return parameters;
+    return 0;
 }
 
 void free_params_struct(params_t* parameters) {
@@ -73,5 +65,4 @@ void free_params_struct(params_t* parameters) {
         i++;
     }
     free(parameters->points_list);
-    free(parameters);
 }
