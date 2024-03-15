@@ -1,4 +1,3 @@
-
 #include <CUnit/Basic.h>
 #include <CUnit/CUnit.h>
 
@@ -6,62 +5,68 @@
 #include "../headers/common.h"
 #include "../headers/point.h"
 
-
 point_t *initial_centroids;
 int distortion = 10;
-point_t *final_centroids ; 
-point_t **clusters;
-int num_clusters ;
+point_t *final_centroids;
+point_t *clusters;
+int num_clusters;
 
 void Correct_execution() {
     const char *filename = "output.csv"; // Nom du fichier de sortie
 
-    point_t initial_centroids[] = {
-        {.dimension = 2, .coordinates = (int64_t[]){2, 2}},
-        {.dimension = 2, .coordinates = (int64_t[]){3, 4}},
-        {.dimension = 2, .coordinates = (int64_t[]){5, 6}}
-    };
-    int distortion = 10;
-    point_t final_centroids[] = {
-        {.dimension = 2, .coordinates = (int64_t[]){7, 8}},
-        {.dimension = 2, .coordinates = (int64_t[]){9, 10}},
-        {.dimension = 2, .coordinates = (int64_t[]){11, 12}}
-    };
-    point_t **clusters;
-    int num_clusters = 3;
+    // Initialisation des centroides initiaux et finaux en tant que tableaux de point_t
+    initial_centroids = malloc(2 * sizeof(point_t));
+    initial_centroids[0].dimension = 2;
+    initial_centroids[0].coordinates = malloc(initial_centroids[0].dimension * sizeof(long));
+    initial_centroids[0].coordinates[0] = 1;
+    initial_centroids[0].coordinates[1] = 2;
+
+    initial_centroids[1].dimension = 2;
+    initial_centroids[1].coordinates = malloc(initial_centroids[1].dimension * sizeof(long));
+    initial_centroids[1].coordinates[0] = 3;
+    initial_centroids[1].coordinates[1] = 4;
+
+    final_centroids = malloc(2 * sizeof(point_t));
+    final_centroids[0].dimension = 2;
+    final_centroids[0].coordinates = malloc(final_centroids[0].dimension * sizeof(long));
+    final_centroids[0].coordinates[0] = 5;
+    final_centroids[0].coordinates[1] = 6;
+
+    final_centroids[1].dimension = 2;
+    final_centroids[1].coordinates = malloc(final_centroids[1].dimension * sizeof(long));
+    final_centroids[1].coordinates[0] = 7;
+    final_centroids[1].coordinates[1] = 8;
 
     // Allocation et initialisation de clusters (à des fins de démonstration)
-    clusters = malloc(num_clusters * sizeof(point_t *));
-    for (int i = 0; i < num_clusters; i++) {
-        clusters[i] = malloc(num_clusters * sizeof(point_t));
-        for (int j = 0; j < num_clusters; j++) {
-            clusters[i][j].dimension = 2;
-            clusters[i][j].coordinates = (int64_t[]){i * num_clusters + j, i * num_clusters + j + 1};
-        }
-    }
+    num_clusters = 2;
+    clusters = malloc(num_clusters * sizeof(point_t));
+    clusters[0].dimension = 2;
+    clusters[0].coordinates = malloc(clusters[0].dimension * sizeof(int64_t));
+    clusters[0].coordinates[0] = 10;
+    clusters[0].coordinates[1] = 11;
+    clusters[0].clusterID = 0;
+
+    clusters[1].dimension = 2;
+    clusters[1].coordinates = malloc(clusters[1].dimension * sizeof(int64_t));
+    clusters[1].coordinates[0] = 14;
+    clusters[1].coordinates[1] = 12;
+    clusters[1].clusterID = 1;
+
     
+    
+     
     // Exécuter la fonction à tester
-    int result = write_to_csv("test_output.csv", initial_centroids, distortion, final_centroids, &clusters, num_clusters);
+    int result = write_to_csv("test_output.csv", initial_centroids, distortion, final_centroids, 2, clusters, 2);
 
     // Vérifier le résultat
     CU_ASSERT_EQUAL(result, 0);
-
-    for (int i = 0; i < num_clusters; i++) {
-        free(clusters[i]);
-    }
-    
-    free(clusters);
-
-    
 }
 
 int main() {
     CU_initialize_registry();
 
-
     CU_pSuite suite = CU_add_suite("Suite de tests pour write_to_csv", NULL, NULL);
     CU_add_test(suite, "Test de write_to_csv", Correct_execution);
-
 
     CU_basic_run_tests();
 

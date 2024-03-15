@@ -1,4 +1,5 @@
 #include "../headers/distance.h"
+#include "../headers/common.h"
 
 uint64_t squared_manhattan_distance(const point_t *p1, const point_t *p2) {
     uint64_t sum = 0;
