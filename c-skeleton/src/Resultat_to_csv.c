@@ -1,6 +1,4 @@
 #include "../headers/common.h"
-
-
 #include "../headers/point.h"
 #include "../headers/resultat_to_csv.h"
 
