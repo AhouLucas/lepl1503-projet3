@@ -15,7 +15,7 @@ uint64_t nbr_combinations(uint32_t k, uint32_t n) {
     return fact(n)/(fact(n-k)*fact(k));
 }
 
-static void copy_point(point_t* dest, const point_t* src) {
+static void copy_point2(point_t* dest, const point_t* src) {
     uint32_t d = src->dimension;
     dest->dimension = d;
     dest->clusterID = src->clusterID;

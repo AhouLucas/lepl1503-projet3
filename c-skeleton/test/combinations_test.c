@@ -55,7 +55,7 @@ int teardown(void) {
     free(buffer_combinations);
 }
 
-void print_point(point_t* p) {
+void print_point2(point_t* p) {
     printf("(");
     for(uint32_t i = 0 ; i < p->dimension ; i++) {
         printf("%ld", (p->coordinates)[i]);
@@ -64,55 +64,50 @@ void print_point(point_t* p) {
     printf(")\n");
 }
 
-void compare_point(point_t* p1, point_t* p2) {
-    CU_ASSERT_EQUAL(p1->dimension, p2->dimension);
-    CU_ASSERT_EQUAL(p1->clusterID, p2->clusterID);
-    if(p1->dimension != p2->dimension) return;
-    for(uint32_t i = 0 ; i < p1->dimension ; i++) {
-        CU_ASSERT_EQUAL(p1->coordinates[i], p2->coordinates[i]);
-    }
+void compare_points(point_t* p1, point_t* p2) {
+    CU_ASSERT_TRUE(compare_point(p1, p2));
 }
 
 void test_combinations(void) {
-    compare_point(buffer_combinations+0, init_pool+0);
-    compare_point(buffer_combinations+1, init_pool+1);
-    compare_point(buffer_combinations+2, init_pool+2);
+    compare_points(buffer_combinations+0, init_pool+0);
+    compare_points(buffer_combinations+1, init_pool+1);
+    compare_points(buffer_combinations+2, init_pool+2);
 
-    compare_point(buffer_combinations+3, init_pool+0);
-    compare_point(buffer_combinations+4, init_pool+1);
-    compare_point(buffer_combinations+5, init_pool+3);
+    compare_points(buffer_combinations+3, init_pool+0);
+    compare_points(buffer_combinations+4, init_pool+1);
+    compare_points(buffer_combinations+5, init_pool+3);
 
-    compare_point(buffer_combinations+6, init_pool+0);
-    compare_point(buffer_combinations+7, init_pool+1);
-    compare_point(buffer_combinations+8, init_pool+4);
+    compare_points(buffer_combinations+6, init_pool+0);
+    compare_points(buffer_combinations+7, init_pool+1);
+    compare_points(buffer_combinations+8, init_pool+4);
 
-    compare_point(buffer_combinations+9, init_pool+0);
-    compare_point(buffer_combinations+10, init_pool+2);
-    compare_point(buffer_combinations+11, init_pool+3);
+    compare_points(buffer_combinations+9, init_pool+0);
+    compare_points(buffer_combinations+10, init_pool+2);
+    compare_points(buffer_combinations+11, init_pool+3);
 
-    compare_point(buffer_combinations+12, init_pool+0);
-    compare_point(buffer_combinations+13, init_pool+2);
-    compare_point(buffer_combinations+14, init_pool+4);
+    compare_points(buffer_combinations+12, init_pool+0);
+    compare_points(buffer_combinations+13, init_pool+2);
+    compare_points(buffer_combinations+14, init_pool+4);
 
-    compare_point(buffer_combinations+15, init_pool+0);
-    compare_point(buffer_combinations+16, init_pool+3);
-    compare_point(buffer_combinations+17, init_pool+4);
+    compare_points(buffer_combinations+15, init_pool+0);
+    compare_points(buffer_combinations+16, init_pool+3);
+    compare_points(buffer_combinations+17, init_pool+4);
 
-    compare_point(buffer_combinations+18, init_pool+1);
-    compare_point(buffer_combinations+19, init_pool+2);
-    compare_point(buffer_combinations+20, init_pool+3);
+    compare_points(buffer_combinations+18, init_pool+1);
+    compare_points(buffer_combinations+19, init_pool+2);
+    compare_points(buffer_combinations+20, init_pool+3);
 
-    compare_point(buffer_combinations+21, init_pool+1);
-    compare_point(buffer_combinations+22, init_pool+2);
-    compare_point(buffer_combinations+23, init_pool+4);
+    compare_points(buffer_combinations+21, init_pool+1);
+    compare_points(buffer_combinations+22, init_pool+2);
+    compare_points(buffer_combinations+23, init_pool+4);
 
-    compare_point(buffer_combinations+24, init_pool+1);
-    compare_point(buffer_combinations+25, init_pool+3);
-    compare_point(buffer_combinations+26, init_pool+4);
+    compare_points(buffer_combinations+24, init_pool+1);
+    compare_points(buffer_combinations+25, init_pool+3);
+    compare_points(buffer_combinations+26, init_pool+4);
 
-    compare_point(buffer_combinations+27, init_pool+2);
-    compare_point(buffer_combinations+28, init_pool+3);
-    compare_point(buffer_combinations+29, init_pool+4);
+    compare_points(buffer_combinations+27, init_pool+2);
+    compare_points(buffer_combinations+28, init_pool+3);
+    compare_points(buffer_combinations+29, init_pool+4);
 }
 
 int main(int argc, char* argv[]) {
