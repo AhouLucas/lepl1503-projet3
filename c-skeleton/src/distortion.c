@@ -23,7 +23,7 @@ int64_t distortion(squared_distance_func_t squared_distance_function, point_t* f
     int64_t distortion = 0;
 
     //Check for invalid inputs
-    if (final_points == NULL | final_centroids == NULL | squared_distance_function == NULL){
+    if ((final_points == NULL) || (final_centroids == NULL) || (squared_distance_function == NULL)){
         printf("ERROR : Invalid argument");
         return -1;
     }
