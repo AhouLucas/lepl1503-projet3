@@ -2,7 +2,8 @@
 #include "../headers/distance.h"
 #include "../headers/point.h"
 
-/*
+/**
+
 Function that calculates the final distortion of all points 
 --------------------------
 INPUTS:
@@ -20,27 +21,33 @@ int64_t distortion(squared_distance_func_t squared_distance_function, point_t* f
     int64_t distortion = 0;
 
     //Check for invalid inputs
-    if ((final_points == NULL) || (final_centroids == NULL) || (squared_distance_function == NULL)){
+    if ((final_points == NULL) || (&final_centroids[0] == NULL) || (squared_distance_function == NULL)){
         printf("ERROR : Invalid argument");
         return -1;
     }
 
     for (int i = 0; i < num_points ; i++){
 
-        if (&(final_points[i]) == NULL){
+        point_t* point_ptr = &(final_points[i]); //Create a pointer to the point to be used in the distance function
+        if (point_ptr == NULL){
             printf("ERROR : Point is NULL");
             return -1;
         }
-        if (&(final_centroids[final_points[i].clusterID]) == NULL){
+
+        point_t* centroid_ptr = &(final_centroids[final_points[i].clusterID]); //Create a pointer to the centroid to be used in the distance function
+        if (centroid_ptr == NULL){
             printf("ERROR : This point's centroid is NULL");
             return -1;
         }
 
-        point_t* point_ptr = &(final_points[i]); //Create a pointer to the point to be used in the distance function
-        point_t* centroid_ptr = &(final_centroids[final_points[i].clusterID]); // Create a pointer to the centroid to be used in the distance function
-
         distortion += squared_distance_function(point_ptr,centroid_ptr); //Add distance from considered point to its centroid to the total distortion
+        printf("squa_dis_func(point[%d],centroid[%u]) = %lld\n",i,final_points[i].clusterID,squared_distance_function(point_ptr,centroid_ptr));
+        printf("CURRENT Distortion = %lld\n\n",distortion);
     }
-    printf("Distortion %ld",distortion);
+    printf("FINAL Distortion  == %lld\n",distortion);
     return distortion;
 }
+
+
+
+

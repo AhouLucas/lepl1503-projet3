@@ -4,30 +4,6 @@
 #include "../headers/distortion.h"
 #include "../headers/distance.h"
 
-
-void init_point_2D(point_t point, uint32_t clusterID, int64_t x, int64_t y, uint32_t dimension){
-    point.clusterID = clusterID;
-
-    int64_t* coordinnates_point = (int64_t*) malloc(sizeof(int64_t)*2);
-    coordinnates_point[0] = x;
-    coordinnates_point[1] = y;
-
-    point.coordinates = coordinnates_point;
-    point.dimension = 2;
-}
-
-    void init_point_3D(point_t point, uint32_t clusterID, int64_t x, int64_t y, int64_t z, uint32_t dimension){
-    point.clusterID = clusterID;
-
-    int64_t* coordinnates_point = (int64_t*) malloc(sizeof(int64_t)*3);
-    coordinnates_point[0] = x;
-    coordinnates_point[1] = y;
-    coordinnates_point[2] = z;
-
-    point.coordinates = coordinnates_point;
-    point.dimension = 3;
-}
-
 point_t* test_points;
 point_t* test_centroids;
 int nmb_points = 5;
@@ -42,31 +18,28 @@ int init(void){
     if ((test_points == NULL) || (test_centroids == NULL)){
         return -1;
     }
+    // -------------------------------
+    // TO DO :
+    // INITIALIZE POINTS (#5)
+    // INITIALIZE CENTROIDS (#3)
+    // CALCULATE THEORETICAL VALUE OF DISTORTION FOR GIVEN VALUES
+    // -------------------------------
+}
 
-    for (int j = 0; j < nmb_centroids; j++){
-        init_point_2D(test_centroids[j],j,j,j,nmb_dimensions);    
-    }
+int free(void){
 
-    for (int i = 0; i < nmb_points ; i++){
-        if (i < 2){
-            init_point_2D(test_points[i],0,i,1+i,nmb_dimensions);  //Assign centroid to each point arbitrarely (Point 0,1 have centroid 0)
-        }
-        if (i < 4){
-            init_point_2D(test_points[i],1,i,1+i,nmb_dimensions);  //Assign centroid to each point arbitrarely (Point 2,3 have centroid 1)
-        }
-        else {
-            init_point_2D(test_points[i],2,i,1+i,nmb_dimensions);  //Assign centroid to each point arbitrarely (Point 4 have centroid 2)
-        }
-    }
+    // -------------------------------
+    // TO DO :
+    // FREE ALLOCATED MEMORY FOR TESTS
+    // -------------------------------
+
     return 0;
 }
 
+int64_t theoretical_distortion_simple = 0; // ##### CHANGE WITH CALCULATED VALUE ######
 
 void test_distortion_simple(void) {
-    CU_ASSERT_EQUAL(distortion(squared_euclidean_distance, test_points, test_centroids, nmb_points), 37);
-    //CU_ASSERT_EQUAL(distortion(1), 1);
-    //CU_ASSERT_EQUAL(distortion(5), 120);
-    //CU_ASSERT_EQUAL(distortion(15), 1307674368000);
+    CU_ASSERT_EQUAL(distortion(squared_euclidean_distance, test_points, test_centroids, nmb_points), theoretical_distortion_simple);
 }
 
 
@@ -82,7 +55,7 @@ int main(int argc, char const *argv[])
         return CU_get_error();
     }
 
-    if (NULL == CU_add_test(pSuite,"Test Distortion",test_distortion_simple)){
+    if (NULL == CU_add_test(pSuite,"Test Distortion Simple",test_distortion_simple)){
         CU_cleanup_registry();
         return CU_get_error();
     }
