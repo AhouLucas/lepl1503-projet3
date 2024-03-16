@@ -1,4 +1,4 @@
-#include "common.h"
+#include "../headers/common.h"
 #include "../headers/distance.h"
 #include "../headers/point.h"
 
@@ -41,5 +41,6 @@ int64_t distortion(squared_distance_func_t squared_distance_function, point_t* f
 
         distortion += squared_distance_function(point_ptr,centroid_ptr); //Add distance from considered point to its centroid to the total distortion
     }
+    printf("Distortion %ld",distortion);
     return distortion;
 }

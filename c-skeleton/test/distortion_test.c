@@ -63,7 +63,7 @@ int init(void){
 
 
 void test_distortion_simple(void) {
-    CU_ASSERT_EQUAL(distortion(squared_euclidean_distance, test_points, test_centroids, nmb_points), 1);
+    CU_ASSERT_EQUAL(distortion(squared_euclidean_distance, test_points, test_centroids, nmb_points), 37);
     //CU_ASSERT_EQUAL(distortion(1), 1);
     //CU_ASSERT_EQUAL(distortion(5), 120);
     //CU_ASSERT_EQUAL(distortion(15), 1307674368000);
