@@ -2,9 +2,13 @@
 #include "../headers/closest_centroids.h"
 #include "../headers/point.h"
 #include "../headers/distance.h"
+#include "../headers/params.h"
 
-int closest_centroid(point_t* centroids, point_t *points, int k, int num_points, squared_distance_func_t squared_distance_function){
-
+int closest_centroid(point_t* centroids, params_t* params){
+    int k = params->k;
+    int num_points = params->npoints;
+    point_t* points = params->points_list;
+    squared_distance_func_t squared_distance_function = params->squared_distance_func;
     // Check for parameter and return -1 if there is a wrong parameter
     if(centroids == NULL || points == NULL || k < 0 || num_points < 0 || squared_distance_function == NULL) {
         return -1;
