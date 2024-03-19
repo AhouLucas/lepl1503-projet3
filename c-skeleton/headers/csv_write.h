@@ -12,7 +12,7 @@
  * @param quietMode If true, the last column (which corresponds to the list of clusters) will not be written
  * @return int 0 if successful, -1 if an error occurred
  */
-int write_header_csv(FILE* csv_file, bool quietMode);
+int write_header_csv(FILE* stream, bool quietMode);
 /**
  * @brief Writes a line to a csv file every time it is called
  * 
@@ -24,7 +24,7 @@ int write_header_csv(FILE* csv_file, bool quietMode);
  * @param quietMode If true, the last column (which corresponds to the list of clusters) will not be written
  * @return int 0 if successful, -1 if an error occurred
  */
-int write_row_csv(FILE* csv_file, point_t* initialization_centroids, uint64_t distortion, point_t* final_centroids, point_t* points, bool quietMode);
+int write_row_csv(FILE* stream, point_t* initialization_centroids, uint64_t distortion, point_t* final_centroids, point_t* points, size_t num_points, bool quietMode);
 
 
 #endif // CSV_WRITE
