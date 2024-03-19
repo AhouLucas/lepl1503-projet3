@@ -1,8 +1,13 @@
 #include "../headers/common.h"
 #include "../headers/update_centroids.h"
 #include "../headers/point.h"
+#include "../headers/params.h"
 
-int update_centroids(point_t* centroids, point_t* points, int k, int num_points){
+int update_centroids(params_t* params){
+    int k =params->k;
+    int num_points = params->npoints;
+    point_t* points = params->points_list;
+    point_t* centroids = params->centroids;
     //Vérification des paramètres
     if(points == NULL||centroids == NULL || k < 0 || num_points < 0) {
         return -1;

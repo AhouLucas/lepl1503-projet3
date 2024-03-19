@@ -3,6 +3,8 @@
 #include "../headers/common.h"
 #include "../headers/point.h"
 #include "../headers/combinations.h"
+#include <CUnit/Basic.h>
+#include <CUnit/CUnit.h>
 
 void test_factorial_simple(void) {
     CU_ASSERT_EQUAL(fact(0), 1);
