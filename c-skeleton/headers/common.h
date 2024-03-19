@@ -7,6 +7,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <limits.h>
+#include <stdbool.h>
 
 
 #endif // COMMON_H
