@@ -1,5 +1,10 @@
+#include <CUnit/CUnit.h>
+#include <CUnit/Basic.h>
 #include "../headers/common.h"
+#include "../headers/point.h"
 #include "../headers/combinations.h"
+#include <CUnit/Basic.h>
+#include <CUnit/CUnit.h>
 
 void test_factorial_simple(void) {
     CU_ASSERT_EQUAL(fact(0), 1);
@@ -14,11 +19,15 @@ void test_binomial_numbers(void) {
     CU_ASSERT_EQUAL(nbr_combinations(5, 10), 252);
 }
 
+static params_t* parameters;
 static point_t* init_pool;
 static point_t* buffer_combinations;
 static uint32_t dimension = 2;
 
 int init(void) {
+    parameters = (params_t*) malloc(sizeof(params_t));
+    parameters->k = 3;
+    parameters->n_first_initialization_points = 5;
     init_pool = (point_t*) malloc(sizeof(point_t) * 5);
     buffer_combinations = (point_t*) malloc(sizeof(point_t) * 30);
 
@@ -30,27 +39,26 @@ int init(void) {
         p->clusterID = 0;           // clusterID is irrelevant
         int64_t* coord = (int64_t*) malloc(sizeof(int64_t) * dimension);
         if(coord == NULL) {
-            printf("Error while copying point");
+            printf("Error while creating init_pool point");
         }
         for(uint32_t j = 0 ; j < dimension ; j++) {
             coord[j] = i+1;         // coordinates like (x,x) for easier verification
         }
         p->coordinates = coord;
     }
+    parameters->points_list = init_pool;
 
-    int32_t error = generate_all_combinations(init_pool, buffer_combinations, 3, 5);
+    int32_t error = generate_all_combinations(parameters, buffer_combinations);
     if(error == -1) return 1;
 
     return 0;
 }
 
 int teardown(void) {
-    free(init_pool);
-
-    for(int i = 0 ; i < 30 ; i++) {
-        free(buffer_combinations[i].coordinates);
-    }
-    free(buffer_combinations);
+    free_points(init_pool, 5);
+    free_points(buffer_combinations, 30);
+    free(parameters);
+    return 0;
 }
 
 void compare_points(point_t* p1, point_t* p2) {
