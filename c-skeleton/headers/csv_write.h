@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "point.h"
+#include "params.h"
 
 
 /**
@@ -24,7 +25,7 @@ int write_header_csv(FILE* stream, bool quietMode);
  * @param quietMode If true, the last column (which corresponds to the list of clusters) will not be written
  * @return int 0 if successful, -1 if an error occurred
  */
-int write_row_csv(FILE* stream, point_t* initialization_centroids, uint64_t distortion, point_t* final_centroids, point_t* points, size_t num_points, bool quietMode);
+int write_row_csv(FILE* stream, point_t* initialization_centroids, uint64_t distortion, params_t *params);
 
 
 #endif // CSV_WRITE
