@@ -4,7 +4,7 @@
 #include "../headers/distance.h"
 #include "../headers/params.h"
 
-int closest_centroid(point_t* centroids, params_t* params){
+int closest_centroid(params_t* params, point_t* centroids){
     int k = params->k;
     int num_points = params->npoints;
     point_t* points = params->points_list;

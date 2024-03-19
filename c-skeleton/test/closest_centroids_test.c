@@ -1,8 +1,10 @@
 #include "../headers/common.h"
+#include "../headers/params.h"
+#include "../headers/point.h"
 #include "../headers/distance.h"
 #include "../headers/closest_centroids.h"
 
-
+params_t *params;
 point_t *centroids;
 point_t *points;
 int32_t dimension;
@@ -22,12 +24,22 @@ int init_wrong_param_suite(void) {
     if(centroids == NULL || points == NULL) {
         return -1;
     }
+    params = (params_t*) malloc(sizeof(params_t));
+    if(params == NULL) {
+        return -1;
+    }
+    params->k = k;
+    params->npoints = num_points;
+    params->squared_distance_func = squared_distance_function;
+    params->points_list = points;
+    params->dimension = 2;
     return 0;
 }
 
 int clean_wrong_param_suite(void) {
     free(centroids);
     free(points);
+    free(params);
     return 0;
 }
 
@@ -36,23 +48,30 @@ int clean_wrong_param_suite(void) {
 */
 
 void test_centroids_null(void) {
-    CU_ASSERT_EQUAL(closest_centroid(NULL, points, k, num_points, squared_distance_function), -1);
+    CU_ASSERT_EQUAL(closest_centroid(params, NULL), -1);
 }
 
 void test_points_null(void) {
-    CU_ASSERT_EQUAL(closest_centroid(centroids, NULL, k, num_points, squared_distance_function), -1);
+    params->points_list = NULL;
+    CU_ASSERT_EQUAL(closest_centroid(params, centroids), -1);
 }
 
 void test_k_negative(void) {
-    CU_ASSERT_EQUAL(closest_centroid(centroids, points, -1, num_points, squared_distance_function), -1);
+    params->points_list = points;
+    params->k = -1;
+    CU_ASSERT_EQUAL(closest_centroid(params, centroids), -1);
 }
 
 void test_num_points_negative(void) {
-    CU_ASSERT_EQUAL(closest_centroid(centroids, points, k, -1, squared_distance_function), -1);
+    params->k = k;
+    params->npoints = -1;
+    CU_ASSERT_EQUAL(closest_centroid(params, centroids), -1);
 }
 
 void test_squared_distance_function_null(void) {
-    CU_ASSERT_EQUAL(closest_centroid(centroids, points, k, num_points, NULL), -1);
+    params->npoints = num_points;
+    params->squared_distance_func = NULL;
+    CU_ASSERT_EQUAL(closest_centroid(params, centroids), -1);
 }
 
 
@@ -90,12 +109,24 @@ int init_closest_centroids_suite(void) {
     points[3] = p4;
     points[4] = p5;
 
+    params = (params_t*) malloc(sizeof(params_t));
+    if(params == NULL) {
+        return -1;
+    }
+
+    params->k = k;
+    params->npoints = num_points;
+    params->squared_distance_func = squared_distance_function;
+    params->points_list = points;
+    params->dimension = dimension;
+
     return 0;
 }
 
 int clean_closest_centroids_suite(void) {
     free(centroids);
     free(points);
+    free(params);
     return 0;
 }
 
@@ -104,8 +135,7 @@ int clean_closest_centroids_suite(void) {
 */
 
 void test_closest_centroids(void) {
-    CU_ASSERT_EQUAL(closest_centroid(centroids, points, k, num_points, squared_distance_function), 1);
-    printf("\n Centroids of first point : %d\n", points[0].clusterID);
+    CU_ASSERT_EQUAL(closest_centroid(params, centroids), 1);
     CU_ASSERT_EQUAL(points[0].clusterID, 0);
     CU_ASSERT_EQUAL(points[1].clusterID, 1);
     CU_ASSERT_EQUAL(points[2].clusterID, 2);
@@ -114,7 +144,7 @@ void test_closest_centroids(void) {
 }
 
 void test_closest_centroids_no_change(void) {
-    CU_ASSERT_EQUAL(closest_centroid(centroids, points, k, num_points, squared_distance_function), 0);
+    CU_ASSERT_EQUAL(closest_centroid(params, centroids), 0);
     CU_ASSERT_EQUAL(points[0].clusterID, 0);
     CU_ASSERT_EQUAL(points[1].clusterID, 1);
     CU_ASSERT_EQUAL(points[2].clusterID, 2);
