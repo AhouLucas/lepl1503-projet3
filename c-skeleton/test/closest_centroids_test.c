@@ -20,14 +20,13 @@ int init_wrong_param_suite(void) {
     num_points = 5;
     centroids = (point_t*) malloc(k * sizeof(point_t));
     points = (point_t*) malloc(num_points * sizeof(point_t));
-    squared_distance_function = squared_euclidean_distance;
-    if(centroids == NULL || points == NULL) {
-        return -1;
-    }
     params = (params_t*) malloc(sizeof(params_t));
-    if(params == NULL) {
+    squared_distance_function = squared_euclidean_distance;
+
+    if(centroids == NULL || points == NULL || params == NULL) {
         return -1;
     }
+
     params->k = k;
     params->npoints = num_points;
     params->squared_distance_func = squared_distance_function;
@@ -85,8 +84,9 @@ int init_closest_centroids_suite(void) {
     num_points = 5;
     centroids = (point_t*) malloc(k * sizeof(point_t));
     points = (point_t*) malloc(num_points * sizeof(point_t));
+    params = (params_t*) malloc(sizeof(params_t));
     squared_distance_function = squared_euclidean_distance;
-    if(centroids == NULL || points == NULL) {
+    if(centroids == NULL || points == NULL || params == NULL) {
         return -1;
     }
 
@@ -112,17 +112,17 @@ int init_closest_centroids_suite(void) {
     points[3] = p4;
     points[4] = p5;
 
-    params = (params_t*) malloc(sizeof(params_t));
-    if(params == NULL) {
-        return -1;
-    }
-
     params->k = k;
     params->npoints = num_points;
     params->squared_distance_func = squared_distance_function;
     params->points_list = points;
     params->centroids = centroids;
     params->dimension = dimension;
+    params->input_stream = NULL;
+    params->output_stream = NULL;
+    params->n_threads = 1;
+    params->n_first_initialization_points = 1;
+    params->quiet = false;
 
     return 0;
 }
