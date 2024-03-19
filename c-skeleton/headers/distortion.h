@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include"distance.h"
+#include"common.h"
+#include"params.h"
 
-int64_t distortion(squared_distance_func_t , point_t* final_points, point_t* final_centroids, int num_points);
+int64_t distortion(params_t* params);

@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "point.h"
+#include "params.h"
 
 
 
@@ -20,6 +21,6 @@
  * @return int -1 if an error occurred, 0 if no file could be created, 1 if the file have been correctly intialised 
  */
 
-int write_to_csv(const char *filename, point_t *initial_centroids, int distortion, point_t *final_centroids,  int num_clusters,point_t *liste_cluster,int nbre_point);
+int write_to_csv(params_t* input , point_t *initial_centroids, int distortion, point_t *final_centroids);
 
 #endif 

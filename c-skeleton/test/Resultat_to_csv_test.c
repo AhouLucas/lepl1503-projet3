@@ -14,6 +14,8 @@ int num_clusters;
 void Correct_execution() {
     const char *filename = "output.csv"; // Nom du fichier de sortie
 
+    
+
     // Initialisation des centroides initiaux et finaux en tant que tableaux de point_t
     initial_centroids = malloc(2 * sizeof(point_t));
     initial_centroids[0].dimension = 2;
@@ -51,12 +53,28 @@ void Correct_execution() {
     clusters[1].coordinates[0] = 14;
     clusters[1].coordinates[1] = 12;
     clusters[1].clusterID = 1;
+    printf("okay") ;
+    
+    params_t *input_params = malloc(sizeof(params_t));
+
+    input_params->input_stream = fopen("input.txt", "r");
+    input_params->output_stream = fopen(filename, "w");
+    input_params->n_threads = 4;
+    input_params->k = num_clusters;
+    input_params->n_first_initialization_points = 5;
+    input_params->quiet = false;
+    input_params->squared_distance_func = NULL;
+    input_params->dimension = 2;
+    input_params->npoints = 2;
+    input_params->points_list = clusters ; 
+
+    printf("okay2") ;
 
     
     
      
     // Exécuter la fonction à tester
-    int result = write_to_csv("test_output.csv", initial_centroids, distortion, final_centroids, 2, clusters, 2);
+    int result = write_to_csv(input_params, initial_centroids, distortion, final_centroids);
 
     // Vérifier le résultat
     CU_ASSERT_EQUAL(result, 0);

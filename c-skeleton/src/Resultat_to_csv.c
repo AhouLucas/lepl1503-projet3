@@ -1,19 +1,16 @@
 #include "../headers/common.h"
 #include "../headers/point.h"
 #include "../headers/resultat_to_csv.h"
-void pri (FILE *output_file , char *a) {
-    printf("%s\n" , a) ; 
-}
+#include "../headers/params.h"
 
 
 
-int write_to_csv(const char *filename, point_t *initial_centroids, int distortion, point_t *final_centroids,  int num_clusters,point_t *liste_cluster,int nbre_point) {
-    FILE *output_file = fopen(filename, "w"); 
-
-    if (output_file == NULL) {
-        perror("Erreur lors de l'ouverture du fichier");
-        return 1;
-    }
+int write_to_csv(params_t* input , point_t *initial_centroids, int distortion, point_t *final_centroids) {
+    FILE *output_file = input->output_stream ;
+    uint32_t num_clusters = input->k ;
+    uint64_t nbre_point = input->npoints ; 
+    point_t *liste_cluster = input->points_list ;
+    
      
 
     
