@@ -21,7 +21,15 @@ void test_write_csv() {
         (point_t){ .clusterID = 3, .dimension = 2, .coordinates = p2 },
     };
 
-    write_row_csv(stdout, initialization_centroids, 15, initialization_centroids, points, 5, false);
+    params_t params = {
+        .centroids = initialization_centroids,
+        .points_list = points,
+        .npoints = 5,
+        .quiet = false,
+        .k = 3,
+    };
+
+    write_row_csv(stdout, initialization_centroids, 15, &params);
 }
 
 int main() {
