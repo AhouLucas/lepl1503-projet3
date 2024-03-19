@@ -3,6 +3,8 @@
 #include "../headers/common.h"
 #include "../headers/distortion.h"
 #include "../headers/distance.h"
+#include <CUnit/Basic.h>
+#include <CUnit/CUnit.h>
 
 point_t* test_points;
 point_t* test_centroids;
