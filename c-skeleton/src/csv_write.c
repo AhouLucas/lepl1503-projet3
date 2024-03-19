@@ -47,24 +47,21 @@ inline static void write_point_list(FILE* stream, point_t *points, size_t num_po
     fputs("]\"", stream);
 }
 
-int write_row_csv(FILE* stream, point_t* initialization_centroids, uint64_t distortion, point_t* final_centroids, point_t* points, size_t num_points, bool quietMode) {
-    // TODO as a param
-    int k = 3;
-
-    write_point_list(stream, initialization_centroids, k);
+int write_row_csv(FILE* stream, point_t* initialization_centroids, uint64_t distortion, params_t *params) {
+    write_point_list(stream, initialization_centroids, params->k);
 
     fprintf(stream, ",%d,", distortion);
 
-    write_point_list(stream, final_centroids, k);
+    write_point_list(stream, params->centroids, params->k);
 
-    if (!quietMode) {
-        qsort(points, num_points, sizeof(point_t), cmp_points);
+    if (!params->quiet) {
+        qsort(params->points_list, params->npoints, sizeof(point_t), cmp_points);
 
         int last_cluster_id = -1;
         fputs(",\"[[", stream);
 
-        for (size_t i = 0; i < num_points; i++) {
-            point_t point = points[i];
+        for (size_t i = 0; i < params->npoints; i++) {
+            point_t point = params->points_list[i];
 
             if (last_cluster_id != point.clusterID) {
                 fputs("], [", stream);
