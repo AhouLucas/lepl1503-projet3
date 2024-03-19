@@ -15,7 +15,7 @@ int npoints ;
 void Correct_execution() {
     const char *filename = "output.csv"; // Nom du fichier de sortie
     num_clusters = 3 ; 
-    npoints = 3 ; 
+    npoints = 7 ; 
 
     
 
@@ -44,7 +44,7 @@ void Correct_execution() {
         clusters[i].coordinates = malloc(clusters[0].dimension * sizeof(int64_t));
         clusters[i].coordinates[0] = rand() % 20;
         clusters[i].coordinates[1] = rand() % 20;
-        clusters[i].clusterID = rand() % 2;
+        clusters[i].clusterID = rand() % num_clusters;
     }
     
     
