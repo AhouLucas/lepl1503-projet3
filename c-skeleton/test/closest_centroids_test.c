@@ -32,6 +32,7 @@ int init_wrong_param_suite(void) {
     params->npoints = num_points;
     params->squared_distance_func = squared_distance_function;
     params->points_list = points;
+    params->centroids = centroids;
     params->dimension = 2;
     return 0;
 }
@@ -48,30 +49,32 @@ int clean_wrong_param_suite(void) {
 */
 
 void test_centroids_null(void) {
-    CU_ASSERT_EQUAL(closest_centroid(params, NULL), -1);
+    params->centroids = NULL;
+    CU_ASSERT_EQUAL(closest_centroid(params), -1);
 }
 
 void test_points_null(void) {
+    params->centroids = centroids;
     params->points_list = NULL;
-    CU_ASSERT_EQUAL(closest_centroid(params, centroids), -1);
+    CU_ASSERT_EQUAL(closest_centroid(params), -1);
 }
 
 void test_k_negative(void) {
     params->points_list = points;
     params->k = -1;
-    CU_ASSERT_EQUAL(closest_centroid(params, centroids), -1);
+    CU_ASSERT_EQUAL(closest_centroid(params), -1);
 }
 
 void test_num_points_negative(void) {
     params->k = k;
     params->npoints = -1;
-    CU_ASSERT_EQUAL(closest_centroid(params, centroids), -1);
+    CU_ASSERT_EQUAL(closest_centroid(params), -1);
 }
 
 void test_squared_distance_function_null(void) {
     params->npoints = num_points;
     params->squared_distance_func = NULL;
-    CU_ASSERT_EQUAL(closest_centroid(params, centroids), -1);
+    CU_ASSERT_EQUAL(closest_centroid(params), -1);
 }
 
 
@@ -118,6 +121,7 @@ int init_closest_centroids_suite(void) {
     params->npoints = num_points;
     params->squared_distance_func = squared_distance_function;
     params->points_list = points;
+    params->centroids = centroids;
     params->dimension = dimension;
 
     return 0;
@@ -135,7 +139,7 @@ int clean_closest_centroids_suite(void) {
 */
 
 void test_closest_centroids(void) {
-    CU_ASSERT_EQUAL(closest_centroid(params, centroids), 1);
+    CU_ASSERT_EQUAL(closest_centroid(params), 1);
     CU_ASSERT_EQUAL(points[0].clusterID, 0);
     CU_ASSERT_EQUAL(points[1].clusterID, 1);
     CU_ASSERT_EQUAL(points[2].clusterID, 2);
@@ -144,7 +148,7 @@ void test_closest_centroids(void) {
 }
 
 void test_closest_centroids_no_change(void) {
-    CU_ASSERT_EQUAL(closest_centroid(params, centroids), 0);
+    CU_ASSERT_EQUAL(closest_centroid(params), 0);
     CU_ASSERT_EQUAL(points[0].clusterID, 0);
     CU_ASSERT_EQUAL(points[1].clusterID, 1);
     CU_ASSERT_EQUAL(points[2].clusterID, 2);

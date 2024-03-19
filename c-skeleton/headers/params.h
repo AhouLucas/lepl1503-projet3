@@ -18,6 +18,7 @@ typedef struct {
     uint32_t dimension;
     uint64_t npoints;
     point_t* points_list;
+    point_t* centroids;
 } params_t;
 
 #endif
