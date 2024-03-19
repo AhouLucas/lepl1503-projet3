@@ -1,6 +1,5 @@
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
-
 #include "../headers/point.h"
 
 point_t p1 = {2, (int64_t[]){1, 1}, 0};

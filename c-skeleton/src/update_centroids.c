@@ -1,23 +1,24 @@
 #include "../headers/common.h"
 #include "../headers/update_centroids.h"
 #include "../headers/point.h"
+#include "../headers/params.h"
 
-int update_centroids(point_t* centroids, point_t* points, int k, int num_points){
+int update_centroids(params_t* params){
     //Vérification des paramètres
-    if(points == NULL||centroids == NULL || k < 0 || num_points < 0) {
+    if(params->points_list == NULL||params->centroids == NULL || params->k < 0 || params->npoints < 0) {
         return -1;
     }
     
     int changed = 0;
-    int64_t** sumPos = (int64_t**)malloc(k*sizeof(int64_t*)); //Somme des positions pour chaque cluster
-    int* pByClust = (int*)calloc(k,sizeof(int)); //Nombre de points par cluster
+    int64_t** sumPos = (int64_t**)malloc(params->k*sizeof(int64_t*)); //Somme des positions pour chaque cluster
+    int* pByClust = (int*)calloc(params->k,sizeof(int)); //Nombre de points par cluster
     if(sumPos==NULL||pByClust==NULL){
         return -1;
     }
     
     //Allocation de mémoire pour chaque coordonée dans les sumPos
-    for(int i=0; i<k;i++){
-        sumPos[i] = (int64_t*)calloc(points[0].dimension, sizeof(int64_t));
+    for(int i=0; i<params->k;i++){
+        sumPos[i] = (int64_t*)calloc(params->dimension, sizeof(int64_t));
         if(sumPos[i] == NULL){
             for(int j = 0; j < i; j++){
                 free(sumPos[j]);
@@ -29,26 +30,26 @@ int update_centroids(point_t* centroids, point_t* points, int k, int num_points)
     }
     
     //Parcourir chaque point
-    for(int i = 0; i<num_points; i++){
+    for(int i = 0; i<params->npoints; i++){
         //Ajouter les coordonnées du point à la somme du cluster
-        for(int eachDim = 0; eachDim<points[0].dimension; eachDim++){
-            if(sumPos[points[i].clusterID]==NULL){
-            sumPos[points[i].clusterID][eachDim]=0;
+        for(int eachDim = 0; eachDim<params->dimension; eachDim++){
+            if(sumPos[params->points_list[i].clusterID]==NULL){
+            sumPos[params->points_list[i].clusterID][eachDim]=0;
             }
-            sumPos[points[i].clusterID][eachDim]+=points[i].coordinates[eachDim];
+            sumPos[params->points_list[i].clusterID][eachDim]+=params->points_list[i].coordinates[eachDim];
         }
         //Augmenter le nombre de points du cluster
-        pByClust[points[i].clusterID]++;    
+        pByClust[params->points_list[i].clusterID]++;    
     }
 
     //Calculer le nouveau centroïde
-    for(int c = 0; c<k; c++){
-        for(int eachDim = 0; eachDim<points[0].dimension; eachDim++){
+    for(int c = 0; c<params->k; c++){
+        for(int eachDim = 0; eachDim<params->dimension; eachDim++){
             if(pByClust[c]==0){;}
             else{
-                if(centroids[c].coordinates[eachDim]==sumPos[c][eachDim]/pByClust[c]){;} //Coordonnée du centroïde déjà au centre du cluster
+                if(params->centroids[c].coordinates[eachDim]==sumPos[c][eachDim]/pByClust[c]){;} //Coordonnée du centroïde déjà au centre du cluster
                 else{
-                    centroids[c].coordinates[eachDim]=sumPos[c][eachDim]/pByClust[c]; //Mise à jour du centroïde
+                    params->centroids[c].coordinates[eachDim]=sumPos[c][eachDim]/pByClust[c]; //Mise à jour du centroïde
                     changed = 1;
                 }
             }
@@ -56,7 +57,7 @@ int update_centroids(point_t* centroids, point_t* points, int k, int num_points)
     }
 
     //Libération de la mémoire allouée
-    for(int i = 0; i < k; i++){
+    for(int i = 0; i < params->k; i++){
         free(sumPos[i]);
     }
     free(sumPos);

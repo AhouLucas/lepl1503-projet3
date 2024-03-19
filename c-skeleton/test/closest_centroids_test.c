@@ -3,6 +3,8 @@
 #include "../headers/point.h"
 #include "../headers/distance.h"
 #include "../headers/closest_centroids.h"
+#include <CUnit/Basic.h>
+#include <CUnit/CUnit.h>
 
 params_t *params;
 point_t *centroids;
