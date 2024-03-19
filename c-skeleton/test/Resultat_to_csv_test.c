@@ -10,50 +10,45 @@ int distortion = 10;
 point_t *final_centroids;
 point_t *clusters;
 int num_clusters;
+int npoints ; 
 
 void Correct_execution() {
     const char *filename = "output.csv"; // Nom du fichier de sortie
+    num_clusters = 3 ; 
+    npoints = 3 ; 
 
     
 
     // Initialisation des centroides initiaux et finaux en tant que tableaux de point_t
-    initial_centroids = malloc(2 * sizeof(point_t));
-    initial_centroids[0].dimension = 2;
-    initial_centroids[0].coordinates = malloc(initial_centroids[0].dimension * sizeof(long));
-    initial_centroids[0].coordinates[0] = 1;
-    initial_centroids[0].coordinates[1] = 2;
+    // Initialisation des centroides initiaux et finaux en tant que tableaux de point_t
+    initial_centroids = malloc(num_clusters * sizeof(point_t));
+    final_centroids = malloc(num_clusters * sizeof(point_t));
 
-    initial_centroids[1].dimension = 2;
-    initial_centroids[1].coordinates = malloc(initial_centroids[1].dimension * sizeof(long));
-    initial_centroids[1].coordinates[0] = 3;
-    initial_centroids[1].coordinates[1] = 4;
+    for (int i = 0; i < num_clusters; i++) {
+        initial_centroids[i].dimension = 2;
+        initial_centroids[i].coordinates = malloc(initial_centroids[i].dimension * sizeof(long));
+        initial_centroids[i].coordinates[0] = rand() % 20;
+        initial_centroids[i].coordinates[1] = rand() % 20;
 
-    final_centroids = malloc(2 * sizeof(point_t));
-    final_centroids[0].dimension = 2;
-    final_centroids[0].coordinates = malloc(final_centroids[0].dimension * sizeof(long));
-    final_centroids[0].coordinates[0] = 5;
-    final_centroids[0].coordinates[1] = 6;
-
-    final_centroids[1].dimension = 2;
-    final_centroids[1].coordinates = malloc(final_centroids[1].dimension * sizeof(long));
-    final_centroids[1].coordinates[0] = 7;
-    final_centroids[1].coordinates[1] = 8;
+        final_centroids[i].dimension = 2;
+        final_centroids[i].coordinates = malloc(final_centroids[i].dimension * sizeof(long));
+        final_centroids[i].coordinates[0] = rand() % 20;
+        final_centroids[i].coordinates[1] = rand() % 20;
+    }
 
     // Allocation et initialisation de clusters (à des fins de démonstration)
-    num_clusters = 2;
-    clusters = malloc(num_clusters * sizeof(point_t));
-    clusters[0].dimension = 2;
-    clusters[0].coordinates = malloc(clusters[0].dimension * sizeof(int64_t));
-    clusters[0].coordinates[0] = 10;
-    clusters[0].coordinates[1] = 11;
-    clusters[0].clusterID = 0;
+    clusters = (point_t*) malloc(npoints * sizeof(point_t));
 
-    clusters[1].dimension = 2;
-    clusters[1].coordinates = malloc(clusters[1].dimension * sizeof(int64_t));
-    clusters[1].coordinates[0] = 14;
-    clusters[1].coordinates[1] = 12;
-    clusters[1].clusterID = 1;
-    printf("okay") ;
+    for(int i = 0 ; i <  npoints ; i++) {
+        clusters[i].dimension = 2 ; 
+        clusters[i].coordinates = malloc(clusters[0].dimension * sizeof(int64_t));
+        clusters[i].coordinates[0] = rand() % 20;
+        clusters[i].coordinates[1] = rand() % 20;
+        clusters[i].clusterID = rand() % 2;
+    }
+    
+    
+    
     
     params_t *input_params = malloc(sizeof(params_t));
 
@@ -65,10 +60,10 @@ void Correct_execution() {
     input_params->quiet = false;
     input_params->squared_distance_func = NULL;
     input_params->dimension = 2;
-    input_params->npoints = 2;
+    input_params->npoints = npoints;
     input_params->points_list = clusters ; 
+    
 
-    printf("okay2") ;
 
     
     
@@ -78,6 +73,19 @@ void Correct_execution() {
 
     // Vérifier le résultat
     CU_ASSERT_EQUAL(result, 0);
+
+    for (int i = 0; i < num_clusters; ++i) {
+        free(initial_centroids[i].coordinates);
+        free(final_centroids[i].coordinates);
+    }
+    free(initial_centroids);
+    free(final_centroids);
+    for (int i = 0; i < npoints; ++i) {
+        free(clusters[i].coordinates);
+    }
+    free(clusters);
+    
+    free(input_params);
 }
 
 int main() {

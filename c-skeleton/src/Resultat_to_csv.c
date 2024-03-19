@@ -23,6 +23,7 @@ int write_to_csv(params_t* input , point_t *initial_centroids, int distortion, p
     // Écriture des lignes de données
         // Écriture des centroides d'initialisation
         fprintf(output_file, "\"[");
+        
         for (uint32_t j = 0; j < initial_centroids[0].dimension; j++) {
             fprintf(output_file, "%ld", initial_centroids[0].coordinates[j]);
             if (j != initial_centroids[0].dimension - 1)
