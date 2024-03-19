@@ -1,4 +1,5 @@
 #include "../headers/common.h"
+#include "../headers/params.h"
 #include "../headers/point.h"
 #include "../headers/combinations.h"
 
@@ -15,9 +16,12 @@ uint64_t nbr_combinations(uint32_t k, uint32_t n) {
     return fact(n)/(fact(n-k)*fact(k));
 }
 
-int32_t generate_all_combinations(point_t* pool, point_t* memory, uint32_t k, uint32_t n) {
+int32_t generate_all_combinations(params_t* parameters, point_t* memory) {
+    uint32_t k = parameters->k;
+    uint32_t n = parameters->n_first_initialization_points;
+    point_t* pool = parameters->points_list;
     if(k > n) return -1;
-    point_t pre[k];
+    point_t* pre = (point_t*) malloc(sizeof(point_t) * k);
     uint64_t index = 0;
 
     void generate_combination(point_t* pre, uint32_t recursion, uint32_t j) {
@@ -31,11 +35,15 @@ int32_t generate_all_combinations(point_t* pool, point_t* memory, uint32_t k, ui
         if(j>=n) {
             return;
         }
+        if(j != 0) {
+            free((pre+recursion)->coordinates);
+        }
         copy_point(pre+recursion, pool+j);
         generate_combination(pre, recursion+1, j+1);
         generate_combination(pre, recursion, j+1);
     }
     
     generate_combination(pre, 0, 0);
+    free_points(pre, k);
     return 0;
 }
