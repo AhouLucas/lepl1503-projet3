@@ -49,8 +49,7 @@ int update_centroids(params_t* params){
     //Calculer le nouveau centroïde
     for(int c = 0; c<k; c++){
         for(int eachDim = 0; eachDim<points[0].dimension; eachDim++){
-            if(pByClust[c]==0){;}
-            else{
+            if(pByClust[c]!=0){
                 if(centroids[c].coordinates[eachDim]==sumPos[c][eachDim]/pByClust[c]){;} //Coordonnée du centroïde déjà au centre du cluster
                 else{
                     centroids[c].coordinates[eachDim]=sumPos[c][eachDim]/pByClust[c]; //Mise à jour du centroïde
