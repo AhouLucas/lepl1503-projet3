@@ -1,24 +1,10 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
-#include <getopt.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <inttypes.h>
 #include "headers/distance.h"
-
-
-typedef struct {
-    FILE *input_stream;
-    FILE *output_stream;
-    uint32_t n_threads;
-    uint32_t k;
-    uint32_t n_first_initialization_points;
-    bool quiet;
-    squared_distance_func_t squared_distance_func;
-} args_t;
-
+#include "headers/params.h"
+#include "headers/common.h"
+#include "headers/binary_parse.h"
+#include "headers/combinations.h"
+#include "headers/csv_write.h"
+#include "headers/distortion.h"
 
 void usage(char *prog_name) {
     fprintf(stderr, "USAGE:\n");
@@ -31,8 +17,8 @@ void usage(char *prog_name) {
     fprintf(stderr, "    -d distance (manhattan by default): can be either \"euclidean\" or \"manhattan\". Chooses the distance formula to use by the algorithm to compute the distance between the points\n");
 }
 
-int parse_args(args_t *args, int argc, char *argv[]) {
-    memset(args, 0, sizeof(args_t));    // set everything to 0 by default
+int parse_args(params_t *args, int argc, char *argv[]) {
+    memset(args, 0, sizeof(params_t));    // set everything to 0 by default
     // the default values are the following, they will be changed depending on the arguments given to the program
     args->k = 2;
     args->n_first_initialization_points = args->k;
@@ -102,32 +88,40 @@ int parse_args(args_t *args, int argc, char *argv[]) {
 }
 
 int main(int argc, char *argv[]) {
-    args_t program_arguments;   // allocate the args on the stack
-    parse_args(&program_arguments, argc, argv);
+    params_t params;   // allocate the args on the stack
+    parse_args(&params, argc, argv);
 
-    if (program_arguments.n_first_initialization_points < program_arguments.k) {
+    if (params.n_first_initialization_points < params.k) {
         fprintf(stderr, "Cannot generate an instance of k-means with less initialization points than needed clusters: %"PRIu32" < %"PRIu32"\n",
-                program_arguments.n_first_initialization_points, program_arguments.k);
+                params.n_first_initialization_points, params.k);
         return -1;
     }
     // the following fprintf (and every code already present in this skeleton) can be removed, it is just an example to show you how to use the program arguments
-    fprintf(stderr, "\tnumber of threads executing the LLoyd's algoprithm in parallel: %" PRIu32 "\n", program_arguments.n_threads);
-    fprintf(stderr, "\tnumber of clusters (k): %" PRIu32 "\n", program_arguments.k);
-    fprintf(stderr, "\twe consider all the combinations of the %" PRIu32 " first points of the input as initializations of the Lloyd's algorithm\n", program_arguments.n_first_initialization_points);
-    fprintf(stderr, "\tquiet mode: %s\n", program_arguments.quiet ? "enabled" : "disabled");
-    fprintf(stderr, "\tsquared distance function: %s\n", program_arguments.squared_distance_func == squared_manhattan_distance ? "manhattan" : "euclidean");
+    fprintf(stderr, "\tnumber of threads executing the LLoyd's algoprithm in parallel: %" PRIu32 "\n", params.n_threads);
+    fprintf(stderr, "\tnumber of clusters (k): %" PRIu32 "\n", params.k);
+    fprintf(stderr, "\twe consider all the combinations of the %" PRIu32 " first points of the input as initializations of the Lloyd's algorithm\n", params.n_first_initialization_points);
+    fprintf(stderr, "\tquiet mode: %s\n", params.quiet ? "enabled" : "disabled");
+    fprintf(stderr, "\tsquared distance function: %s\n", params.squared_distance_func == squared_manhattan_distance ? "manhattan" : "euclidean");
 
-    // TODO: parse the binary input file, compute the k-means solutions and write the output in a csv
+    binary_parse(&params);
 
+    // TODO: handle errors
 
+    write_header_csv(&params);
 
+    for (;;) { // TODO replace with combinations()
+        kmeans(params);
+        write_row_csv(NULL, distortion(&params), &params);
+    }
+
+    free_params_struct(&params);
 
     // close the files opened by parse_args
-    if (program_arguments.input_stream != stdin) {
-        fclose(program_arguments.input_stream);
+    if (params.input_stream != stdin) {
+        fclose(params.input_stream);
     }
-    if (program_arguments.output_stream != stdout) {
-        fclose(program_arguments.output_stream);
+    if (params.output_stream != stdout) {
+        fclose(params.output_stream);
     }
     return 0;
 }
