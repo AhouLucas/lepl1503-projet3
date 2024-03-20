@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -Werror -O3
+CFLAGS=-Wall -Werror -g
 LIBS=-lcunit
 
 SRC_DIR=src
