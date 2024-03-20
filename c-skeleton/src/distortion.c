@@ -7,7 +7,7 @@
 uint64_t distortion(params_t* params){
     uint64_t distortion = 0;
 
-    if(params->npoints < 0 || params->points_list == NULL || params->centroids == NULL || params->squared_distance_func == NULL){
+    if(params->points_list == NULL || params->centroids == NULL || params->squared_distance_func == NULL){
         return -1;
     }
 

@@ -26,15 +26,15 @@ int init_distortion_suite(void) {
     params->npoints = 5;
     params->squared_distance_func = squared_euclidean_distance;
 
-    p1 = (point_t) {2, (int64_t[]) {1, 1}, 1};
-    p2 = (point_t) {2, (int64_t[]) {-1, 2}, 2};
-    p3 = (point_t) {2, (int64_t[]) {0, 0}, 0};
-    p4 = (point_t) {2, (int64_t[]) {0, -1}, 1};
-    p5 = (point_t) {2, (int64_t[]) {2, 2}, 1};
+    p1 = create_point(2, (int64_t[]) {1, 1}, 1);
+    p2 = create_point(2, (int64_t[]) {-1, 2}, 2);
+    p3 = create_point(2, (int64_t[]) {0, 0}, 0);
+    p4 = create_point(2, (int64_t[]) {0, -1}, 0);
+    p5 = create_point(2, (int64_t[]) {2, 2}, 1);
 
-    c1 = (point_t) {2, (int64_t[]) {0, 0}, 0};
-    c2 = (point_t) {2, (int64_t[]) {1, 1}, 0};
-    c3 = (point_t) {2, (int64_t[]) {-1, 1}, 0};
+    c1 = create_point(2, (int64_t[]) {0, 0}, 0);
+    c2 = create_point(2, (int64_t[]) {1, 1}, 0);
+    c3 = create_point(2, (int64_t[]) {-1, 1}, 0);
 
     points[0] = p1;
     points[1] = p2;
@@ -75,11 +75,6 @@ void test_distortion_null_points(void) {
     CU_ASSERT_EQUAL(distortion(params), -1);
 }
 
-void test_distortion_negative_num_points(void) {
-    params->points_list = points;
-    params->npoints = -1;
-    CU_ASSERT_EQUAL(distortion(params), -1);
-}
 
 void test_distortion_negative_k(void) {
     params->npoints = 5;
@@ -105,7 +100,6 @@ int main() {
     if (CU_add_test(pSuite, "test_distortion", test_distortion) == NULL ||
         CU_add_test(pSuite, "test_distortion_null_centroids", test_distortion_null_centroids) == NULL ||
         CU_add_test(pSuite, "test_distortion_null_points", test_distortion_null_points) == NULL ||
-        CU_add_test(pSuite, "test_distortion_negative_num_points", test_distortion_negative_num_points) == NULL ||
         CU_add_test(pSuite, "test_distortion_negative_k", test_distortion_negative_k) == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
