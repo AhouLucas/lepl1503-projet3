@@ -5,4 +5,10 @@
 #include"common.h"
 #include"params.h"
 
-int64_t distortion(params_t* params);
+/**
+ * @brief Computes and returns the distortion of the clustering
+ * 
+ * @param params Struct containing all the parameters of the clustering
+ * @return uint64_t Value of the distortion or -1 if the parameters are invalid
+ */
+uint64_t distortion(params_t* params);
