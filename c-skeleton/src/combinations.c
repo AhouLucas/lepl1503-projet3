@@ -7,7 +7,7 @@
 uint32_t k;
 uint32_t n;
 point_t* pool;
-uint64_t index;
+uint64_t combinations_index;
 point_t* memory;
 
 static uint64_t fact_aux(uint64_t n, uint64_t r) {
@@ -20,16 +20,16 @@ uint64_t fact(uint64_t n) {
     return fact_aux(n-1, n);
 }
 
-static uint64_t nbr_combinations(uint32_t k, uint32_t n) {
+uint64_t nbr_combinations(uint32_t k, uint32_t n) {
     return fact(n)/(fact(n-k)*fact(k));
 }
 
 static void generate_combination(point_t* pre, uint32_t recursion, uint32_t j) {
     if(recursion == k) {
         for(int i = 0 ; i < k ; i++) {
-            copy_point(memory+(index*k +i), pre+i);
+            copy_point(memory+(combinations_index*k +i), pre+i);
         }
-        index++;
+        combinations_index++;
         return;
     }
     if(j>=n) {
@@ -49,9 +49,9 @@ int32_t generate_all_combinations(params_t* parameters, point_t* mem) {
     n = parameters->n_first_initialization_points;
     pool = parameters->points_list;
     memory = mem;
+    combinations_index = 0;
     if(k > n) return -1;
     point_t* pre = (point_t*) malloc(sizeof(point_t) * k);
-    uint64_t index = 0;
 
     generate_combination(pre, 0, 0);
     free_points(pre, k);
