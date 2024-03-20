@@ -26,7 +26,7 @@ int init_wrong_param_suite(void) {
     squared_distance_function = squared_euclidean_distance;
 
     if(centroids == NULL || points == NULL || params == NULL) {
-        return -1;
+        return 1;
     }
 
     params->k = k;
@@ -89,7 +89,7 @@ int init_closest_centroids_suite(void) {
     params = (params_t*) malloc(sizeof(params_t));
     squared_distance_function = squared_euclidean_distance;
     if(centroids == NULL || points == NULL || params == NULL) {
-        return -1;
+        return 1;
     }
 
     // Creates 3 centroids
