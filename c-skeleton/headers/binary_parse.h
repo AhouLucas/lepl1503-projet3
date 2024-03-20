@@ -5,7 +5,7 @@
 #include "point.h"
 #include "params.h"
 
-uint32_t binary_parse(FILE*, params_t*);
+uint32_t binary_parse(params_t* params);
 
 void free_params_struct(params_t*);
 

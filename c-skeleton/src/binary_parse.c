@@ -2,40 +2,40 @@
 #include "../headers/point.h"
 #include "../headers/binary_parse.h"
 
-uint32_t binary_parse(FILE *file, params_t* parameters) {
+uint32_t binary_parse(params_t* params) {
     
     uint32_t dim = 0;
-    size_t e_dimension = fread(&dim, sizeof(uint32_t), 1, file);
+    size_t e_dimension = fread(&dim, sizeof(uint32_t), 1, params->input_stream);
     if(e_dimension != 1) {
         printf("Couldn't read the dimension \n In binary_parse");
         return 1;
     }
     dim = be32toh(dim);
-    parameters->dimension = dim;
+    params->dimension = dim;
 
     uint64_t n = 0;
-    size_t e_npoints = fread(&n, sizeof(uint64_t), 1, file);
+    size_t e_npoints = fread(&n, sizeof(uint64_t), 1, params->input_stream);
     if(e_npoints != 1) {
         printf("Couldn't read the number of points \n In binary_parse");
         return 2;
     }
     n = be64toh(n);
-    parameters->npoints = n;
+    params->npoints = n;
 
     point_t* points = (point_t*) malloc(n * sizeof(point_t));
     if(points == NULL) {
         printf("Couldn't malloc for points \n In binary_parse");
         return 3;
     }
-    parameters->points_list = points;
+    params->points_list = points;
 
     uint64_t offset = 0;
     while(offset < n) {
         point_t point;
         int64_t* coordinates = (int64_t*) malloc(dim * sizeof(int64_t));
         
-        size_t e_coordinates = fread(coordinates, sizeof(int64_t), dim, file);
-        if(e_coordinates != dim) {
+        size_t e_coordinates = fread(coordinates, sizeof(int64_t), dim, params->input_stream);
+        if (e_coordinates != dim) {
             printf("There was an error while parsing points \n In binary_parsing");
             return 4;
         }
@@ -50,7 +50,7 @@ uint32_t binary_parse(FILE *file, params_t* parameters) {
         point.clusterID = 0;
         point.coordinates = coordinates;
 
-        parameters->points_list[offset] = point;
+        params->points_list[offset] = point;
         offset++;
     }
     

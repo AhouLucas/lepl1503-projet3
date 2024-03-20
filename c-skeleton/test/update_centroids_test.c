@@ -7,13 +7,14 @@
 
 params_t* params;
 
+
 point_t c1, c2, c3, c4;
 point_t p1, p2, p3, p4, p5, p6;
 
 int init_wrong(void) {
-    printf("STOP\n");
+    params = (params_t*) malloc(sizeof(params_t));
+    if(params==NULL){return -1;}
     params->k = 4;
-    printf("STOP\n");
     params->npoints = 6;
     params->dimension = 2;
     params->centroids = (point_t*) malloc(params->k * sizeof(point_t));
@@ -43,10 +44,13 @@ void test_wrong_input(void){
 int clean(void) {
     free(params->centroids);
     free(params->points_list);
+    free(params);
     return 0;
 }
 
 int init_right(void){
+    params = (params_t*) malloc(sizeof(params_t));
+    if(params==NULL){return -1;}
     params->k = 4;
     params->npoints = 6;
     params->dimension = 2;
