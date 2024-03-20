@@ -7,17 +7,17 @@ static int cmp_points(const void *a, const void *b) {
     return p1.clusterID - p2.clusterID;
 }
 
-int write_header_csv(FILE* stream, bool quietMode) {
-    fputs("initialization centroids,distortion,centroids", stream);
+int write_header_csv(params_t *params) {
+    fputs("initialization centroids,distortion,centroids", params->output_stream);
     
-    if (!quietMode) {
-        fputs(",clusters\n", stream);
+    if (!params->quiet) {
+        fputs(",clusters\n", params->output_stream);
     } else {
-        fputc('\n', stream);
+        fputc('\n', params->output_stream);
     }
 }
 
-inline static void write_point(FILE* stream, point_t point) {
+inline static void write_point(FILE *stream, point_t point) {
     putc('(', stream);
 
     for (int i = 0; i < point.dimension; i++) {
@@ -31,7 +31,7 @@ inline static void write_point(FILE* stream, point_t point) {
     putc(')', stream);
 }
 
-inline static void write_point_list(FILE* stream, point_t *points, size_t num_points) {
+inline static void write_point_list(FILE *stream, point_t *points, size_t num_points) {
     fputs("\"[", stream);
 
     for (int i = 0; i < num_points; i++) {
@@ -47,34 +47,34 @@ inline static void write_point_list(FILE* stream, point_t *points, size_t num_po
     fputs("]\"", stream);
 }
 
-int write_row_csv(FILE* stream, point_t* initialization_centroids, uint64_t distortion, params_t *params) {
-    write_point_list(stream, initialization_centroids, params->k);
+int write_row_csv(point_t *initialization_centroids, uint64_t distortion, params_t *params) {
+    write_point_list(params->output_stream, initialization_centroids, params->k);
 
-    fprintf(stream, ",%d,", distortion);
+    fprintf(params->output_stream, ",%d,", distortion);
 
-    write_point_list(stream, params->centroids, params->k);
+    write_point_list(params->output_stream, params->centroids, params->k);
 
     if (!params->quiet) {
         qsort(params->points_list, params->npoints, sizeof(point_t), cmp_points);
 
         int last_cluster_id = -1;
-        fputs(",\"[[", stream);
+        fputs(",\"[[", params->output_stream);
 
         for (size_t i = 0; i < params->npoints; i++) {
             point_t point = params->points_list[i];
 
             if (last_cluster_id != point.clusterID) {
-                fputs("], [", stream);
+                fputs("], [", params->output_stream);
                 last_cluster_id = point.clusterID;
             } else {
-                fputs(", ", stream);
+                fputs(", ", params->output_stream);
             }
 
-            write_point(stream, point);
+            write_point(params->output_stream, point);
         }
 
-        fputs("]]\"\n", stream);
+        fputs("]]\"\n", params->output_stream);
     } else {
-        fputc('\n', stream);
+        fputc('\n', params->output_stream);
     }
 }
