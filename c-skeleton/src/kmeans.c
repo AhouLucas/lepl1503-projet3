@@ -3,7 +3,6 @@
 #include "../headers/update_centroids.h"
 
 void kmeans(params_t *params) {
-    point_t* centroids = params->centroids;
     int has_changed = 1;
 
     while (has_changed) {

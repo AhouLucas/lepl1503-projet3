@@ -4,7 +4,8 @@
 #include "common.h"
 #include "point.h"
 #include "distance.h"
+#include "params.h"
 
-void kmeans(point_t *initial_centroids, point_t *points, int k, int num_points, squared_distance_func_t squared_distance_function);
+void kmeans(params_t *params);
 
 #endif // KMEANS_H
