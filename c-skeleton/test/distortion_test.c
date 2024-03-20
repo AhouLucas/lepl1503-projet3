@@ -14,7 +14,7 @@ point_t p1, p2, p3, p4, p5;
 point_t c1, c2, c3;
 
 int init_distortion_suite(void) {
-    params_t *params = (params_t*) malloc(sizeof(params_t));
+    params = (params_t*) malloc(sizeof(params_t));
     centroids = (point_t*) malloc(3 * sizeof(point_t));
     points = (point_t*) malloc(5 * sizeof(point_t));
 
