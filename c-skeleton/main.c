@@ -109,7 +109,13 @@ int main(int argc, char *argv[]) {
 
     write_header_csv(&params);
 
-    for (;;) { // TODO replace with combinations()
+    uint64_t n_comb = nbr_combinations(params.k, params.n_first_initialization_points);
+    point_t* initial_centroids = (point_t*) malloc(sizeof(point_t) * params.k * n_comb);
+
+    generate_all_combinations(&params, initial_centroids); // maybe should check for errors
+
+    for (int i = 0; i < n_comb ; i++) { // TODO replace with combinations()
+        params.centroids = initial_centroids+(i*k);
         kmeans(params);
         write_row_csv(NULL, distortion(&params), &params);
     }
