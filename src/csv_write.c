@@ -50,9 +50,6 @@ void write_row_tail_csv(params_t *params, uint64_t distortion) {
     write_point_list(params->output_stream, params->centroids, params->k, params->dimension);
 
     if (!params->quiet) {
-        int last_cluster_id = -1;
-        bool is_first_cluster = true;
-
         fputs(",\"[[", params->output_stream);
 
         for (size_t i = 0; i < params->k; i++) {

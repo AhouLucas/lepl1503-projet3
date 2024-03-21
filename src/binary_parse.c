@@ -22,7 +22,7 @@ uint32_t binary_parse(params_t* params) {
     n = be64toh(n);
     params->npoints = n;
 
-    point_list_t points = (point_list_t*) malloc(n * dim * sizeof(int64_t));
+    point_list_t points = (point_list_t)malloc(n * dim * sizeof(int64_t));
     // Maybe calloc ?
     params->cluster_id = malloc(n * dim * sizeof(uint32_t));
 
@@ -53,8 +53,6 @@ uint32_t binary_parse(params_t* params) {
 }
 
 void free_params_struct(params_t* parameters) {
-    uint64_t n = parameters->npoints;
-    uint64_t i = 0;
     free(parameters->cluster_id);
     free(parameters->points_list);
 }
