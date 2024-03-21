@@ -20,7 +20,8 @@ typedef struct {
     uint64_t npoints;
     point_list_t points_list;
     point_list_t centroids;
-    uint32_t *cluster_id;
+    uint32_t *cluster_ids;
+    uint32_t *cluster_sizes;
 } __attribute__ ((aligned(16))) params_t;
 
 #endif

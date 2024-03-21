@@ -23,8 +23,8 @@ uint32_t binary_parse(params_t* params) {
     params->npoints = n;
 
     point_list_t points = (point_list_t)malloc(n * dim * sizeof(int64_t));
-    // Maybe calloc ?
-    params->cluster_id = malloc(n * dim * sizeof(uint32_t));
+    params->cluster_ids = malloc(n * dim * sizeof(uint32_t));
+    params->cluster_sizes = malloc(n * dim * sizeof(uint32_t));
 
     if(points == NULL) {
         printf("Couldn't malloc for points \n In binary_parse");
@@ -53,6 +53,7 @@ uint32_t binary_parse(params_t* params) {
 }
 
 void free_params_struct(params_t* parameters) {
-    free(parameters->cluster_id);
+    free(parameters->cluster_ids);
+    free(parameters->cluster_sizes);
     free(parameters->points_list);
 }

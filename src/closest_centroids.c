@@ -19,7 +19,7 @@ int closest_centroid(params_t* params){
     
     for(uint32_t i = 0; i < num_points; i++) {   // For each point
         point_ptr_t p = get_point(points, params->dimension, i);//&points[i];
-        uint32_t oldClusterID = params->cluster_id[i];  // Remember the old centroid to know if it has changed
+        uint32_t oldClusterID = params->cluster_ids[i];  // Remember the old centroid to know if it has changed
         uint64_t minDistance = UINT64_MAX;
 
         for(uint32_t centroidIndex = 0; centroidIndex < k; centroidIndex++) {   // For each centroid
@@ -27,11 +27,11 @@ int closest_centroid(params_t* params){
             uint64_t dist = squared_distance_function(p, c, params->dimension); 
 
             if(dist < minDistance) {    // Update point clusterID if it's closer 
-                params->cluster_id[i] = centroidIndex;
+                params->cluster_ids[i] = centroidIndex;
                 minDistance = dist;
             }
         }
-        if(params->cluster_id[i] != oldClusterID) {
+        if(params->cluster_ids[i] != oldClusterID) {
             changed = 1;
         }
     }

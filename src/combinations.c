@@ -10,7 +10,7 @@ static point_list_t pool;
 static uint64_t combinations_index;
 static point_list_t memory;
 
-static uint64_t fact_aux(uint64_t n, uint64_t r) {
+uint64_t fact_aux(uint64_t n, uint64_t r) {
     if(n == 1) return r;
     else return fact_aux(n-1, r*n);
 }

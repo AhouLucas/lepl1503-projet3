@@ -55,7 +55,7 @@ void write_row_tail_csv(params_t *params, uint64_t distortion) {
         for (size_t i = 0; i < params->k; i++) {
             bool first = true;
             for (size_t j = 0; j < params->npoints; j++) {
-                if (params->cluster_id[j] == i) {
+                if (params->cluster_ids[j] == i) {
                     if (!first) {
                         fputs(", ", params->output_stream);
                     }

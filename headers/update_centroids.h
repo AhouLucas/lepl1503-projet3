@@ -10,6 +10,6 @@
  * @param params Structure that contains commons variables
  * @return int -1 if an error occurred, 0 if no centroid have changed, 1 if at least one centroid has changed its position
  */
-int update_centroids(params_t* params);
+void update_centroids(params_t* params);
 
 #endif // UPDATE_CENTROIDS_H
