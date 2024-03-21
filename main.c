@@ -5,6 +5,7 @@
 #include "headers/combinations.h"
 #include "headers/csv_write.h"
 #include "headers/distortion.h"
+#include "headers/kmeans.h"
 
 void usage(char *prog_name) {
     fprintf(stderr, "USAGE:\n");
@@ -68,9 +69,10 @@ int parse_args(params_t *args, int argc, char *argv[]) {
                 break;
             case '?':
                 usage(argv[0]);
-                return 1;
+                return -1;
             default:
                 usage(argv[0]);
+                return -1;
         }
     }
 
@@ -89,23 +91,19 @@ int parse_args(params_t *args, int argc, char *argv[]) {
 
 int main(int argc, char *argv[]) {
     params_t params;   // allocate the args on the stack
-    parse_args(&params, argc, argv);
+    if (parse_args(&params, argc, argv) != 0) {
+        return EXIT_FAILURE;
+    }
 
     if (params.n_first_initialization_points < params.k) {
         fprintf(stderr, "Cannot generate an instance of k-means with less initialization points than needed clusters: %"PRIu32" < %"PRIu32"\n",
                 params.n_first_initialization_points, params.k);
-        return -1;
+        return EXIT_FAILURE;
     }
-    // the following fprintf (and every code already present in this skeleton) can be removed, it is just an example to show you how to use the program arguments
-    fprintf(stderr, "\tnumber of threads executing the LLoyd's algoprithm in parallel: %" PRIu32 "\n", params.n_threads);
-    fprintf(stderr, "\tnumber of clusters (k): %" PRIu32 "\n", params.k);
-    fprintf(stderr, "\twe consider all the combinations of the %" PRIu32 " first points of the input as initializations of the Lloyd's algorithm\n", params.n_first_initialization_points);
-    fprintf(stderr, "\tquiet mode: %s\n", params.quiet ? "enabled" : "disabled");
-    fprintf(stderr, "\tsquared distance function: %s\n", params.squared_distance_func == squared_manhattan_distance ? "manhattan" : "euclidean");
-
-    binary_parse(&params);
-
-    // TODO: handle errors
+    
+    if (binary_parse(&params) != 0) {
+        return EXIT_FAILURE;
+    }
 
     write_header_csv(&params);
 
@@ -115,9 +113,10 @@ int main(int argc, char *argv[]) {
     generate_all_combinations(&params, initial_centroids); // maybe should check for errors
 
     for (int i = 0; i < n_comb ; i++) { // TODO replace with combinations()
-        params.centroids = initial_centroids+(i*k);
-        kmeans(params);
-        write_row_csv(NULL, distortion(&params), &params);
+        write_row_head_csv(&params, initial_centroids+(i*params.k));
+        params.centroids = initial_centroids+(i*params.k);
+        kmeans(&params);
+        write_row_tail_csv(&params, distortion(&params));
     }
 
     free_params_struct(&params);

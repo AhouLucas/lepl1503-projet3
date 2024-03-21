@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -Werror -O3
+CFLAGS=-Wall -Werror -g
 LIBS=-lcunit
 
 SRC_DIR=src
@@ -30,10 +30,15 @@ $(TEST_BUILD_DIR)/%: $(TEST_DIR)/%.c $(OBJECTS)
 
 # Replace with: kmeans $(TESTS) when every test compiles
 tests: kmeans build_test/closest_centroids_test build_test/distance_test
+	echo -e "-- \n\033[1;32mUNIT TESTS\033[0m" --; \
 	for test in $(TEST_BUILD_DIR)/*; do \
 	    echo -e "\n\033[1;32mRunning $$test:\033[0m"; \
 		$$test; \
 	done
+
+	echo -e "-- \n\033[1;32mMEMORY TEST\033[0m" --; \
+	valgrind ./kmeans
+
 
 clean:
 	rm -rf $(BUILD_DIR)
