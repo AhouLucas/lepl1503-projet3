@@ -25,11 +25,11 @@ for i in range(1, 500, 10):
     with open("bench.json", "w") as f:
         json.dump(res, f)
 
-    subprocess.run(["python", "json_to_input.py", "bench.json", "bench.bin"])
+    subprocess.run(["python3", "json_to_input.py", "bench.json", "bench.bin"])
 
     start = time.time()
 
-    subprocess.run(["python", "k-means.py", "-k", "3", "-p", "5", "bench.bin", "-f", "output-py.csv"])
+    subprocess.run(["python3", "k-means.py", "-k", "3", "-p", "5", "bench.bin", "-f", "output-py.csv"])
 
     end = time.time()
 
