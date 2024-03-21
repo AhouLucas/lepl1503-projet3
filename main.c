@@ -138,6 +138,7 @@ int main(int argc, char *argv[]) {
         write_row_tail_csv(&params, distortion(&params));
     }
 
+    free(initial_centroids);
     free_params_struct(&params);
 
     free(initial_centroids);
