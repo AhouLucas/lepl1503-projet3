@@ -1,6 +1,10 @@
 #include "../headers/common.h"
 #include "../headers/point.h"
 
+inline point_ptr_t get_point(point_list_t list, uint32_t dim, size_t point_index) {
+    return list + dim * point_index;
+}
+
 // point_t create_point(uint32_t dimension, int64_t* coordinates, uint32_t clusterID) {
 //     point_t p;
 //     p.dimension = dimension;

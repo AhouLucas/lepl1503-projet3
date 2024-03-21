@@ -127,7 +127,7 @@ int main(int argc, char *argv[]) {
     write_header_csv(&params);
 
     uint64_t n_comb = nbr_combinations(params.k, params.n_first_initialization_points);
-    point_t* initial_centroids = (point_t*) malloc(sizeof(point_t) * params.k * n_comb);
+    point_list_t initial_centroids = (point_list_t) malloc(sizeof(int64_t) * params.k * n_comb * params.dimension);
 
     generate_all_combinations(&params, initial_centroids); // maybe should check for errors
 

@@ -7,9 +7,7 @@ typedef int64_t* point_list_t;
 typedef int64_t* point_ptr_t;
 
 
-inline point_t get_point(point_list_t list, uint32_t dim, size_t point_index) {
-    return list + dim * point_index;
-}
+point_ptr_t get_point(point_list_t list, uint32_t dim, size_t point_index);
 
 // /**
 //  * @brief Create a point object, using a malloc for coordinates.
