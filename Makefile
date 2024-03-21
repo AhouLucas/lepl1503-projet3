@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -Werror -g
+CFLAGS=-Wall -Werror -Ofast -march=native -flto -ftree-vectorize -g
 LIBS=-lcunit
 
 SRC_DIR=src

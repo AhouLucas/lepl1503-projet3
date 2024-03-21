@@ -92,16 +92,35 @@ int parse_args(params_t *args, int argc, char *argv[]) {
 int main(int argc, char *argv[]) {
     params_t params;   // allocate the args on the stack
     if (parse_args(&params, argc, argv) != 0) {
+        if (params.input_stream != stdin) {
+            fclose(params.input_stream);
+        }
+        if (params.output_stream != stdout) {
+            fclose(params.output_stream);
+        }
         return EXIT_FAILURE;
     }
 
     if (params.n_first_initialization_points < params.k) {
         fprintf(stderr, "Cannot generate an instance of k-means with less initialization points than needed clusters: %"PRIu32" < %"PRIu32"\n",
                 params.n_first_initialization_points, params.k);
+
+        if (params.input_stream != stdin) {
+            fclose(params.input_stream);
+        }
+        if (params.output_stream != stdout) {
+            fclose(params.output_stream);
+        }
         return EXIT_FAILURE;
     }
     
     if (binary_parse(&params) != 0) {
+        if (params.input_stream != stdin) {
+            fclose(params.input_stream);
+        }
+        if (params.output_stream != stdout) {
+            fclose(params.output_stream);
+        }
         return EXIT_FAILURE;
     }
 
@@ -120,6 +139,8 @@ int main(int argc, char *argv[]) {
     }
 
     free_params_struct(&params);
+
+    free(initial_centroids);
 
     // close the files opened by parse_args
     if (params.input_stream != stdin) {
