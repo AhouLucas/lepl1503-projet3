@@ -132,8 +132,8 @@ int main(int argc, char *argv[]) {
     generate_all_combinations(&params, initial_centroids); // maybe should check for errors
 
     for (int i = 0; i < n_comb ; i++) { // TODO replace with combinations()
-        write_row_head_csv(&params, initial_centroids+(i*params.k));
-        params.centroids = initial_centroids+(i*params.k);
+        write_row_head_csv(&params, initial_centroids+(i*params.k*params.dimension));
+        params.centroids = initial_centroids+(i*params.k*params.dimension);
         kmeans(&params);
         write_row_tail_csv(&params, distortion(&params));
     }

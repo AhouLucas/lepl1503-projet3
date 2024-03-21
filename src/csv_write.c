@@ -53,19 +53,19 @@ void write_row_tail_csv(params_t *params, uint64_t distortion) {
         fputs(",\"[[", params->output_stream);
 
         for (size_t i = 0; i < params->k; i++) {
+            bool first = true;
             for (size_t j = 0; j < params->npoints; j++) {
                 if (params->cluster_id[j] == i) {
-                    if (j != 0) {
+                    if (!first) {
                         fputs(", ", params->output_stream);
                     }
 
                     write_point(params->output_stream, get_point(params->points_list, params->dimension, j), params->dimension);
+                    first = false;
                 }
             }
 
             if (i < params->k - 1) {
-                fputs(", ", params->output_stream);
-            } else {
                 fputs("], [", params->output_stream);
             }
         }
