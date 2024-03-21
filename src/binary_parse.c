@@ -22,7 +22,10 @@ uint32_t binary_parse(params_t* params) {
     n = be64toh(n);
     params->npoints = n;
 
-    point_t* points = (point_t*) malloc(n * sizeof(point_t));
+    point_list_t points = (point_list_t)malloc(n * dim * sizeof(int64_t));
+    params->cluster_ids = malloc(n * dim * sizeof(uint32_t));
+    params->cluster_sizes = malloc(n * dim * sizeof(uint32_t));
+
     if(points == NULL) {
         printf("Couldn't malloc for points \n In binary_parse");
         return 3;
@@ -31,9 +34,7 @@ uint32_t binary_parse(params_t* params) {
 
     uint64_t offset = 0;
     while(offset < n) {
-        point_t point;
-        int64_t* coordinates = (int64_t*) malloc(dim * sizeof(int64_t));
-        
+        point_ptr_t coordinates = get_point(points, dim, offset);
         size_t e_coordinates = fread(coordinates, sizeof(int64_t), dim, params->input_stream);
         if (e_coordinates != dim) {
             printf("There was an error while parsing points \n In binary_parsing");
@@ -45,12 +46,6 @@ uint32_t binary_parse(params_t* params) {
             coordinates[i] = (int64_t) be64toh((uint64_t) coordinates[i]);
             i++;
         }
-
-        point.dimension = dim;
-        point.clusterID = 0;
-        point.coordinates = coordinates;
-
-        params->points_list[offset] = point;
         offset++;
     }
     
@@ -58,11 +53,7 @@ uint32_t binary_parse(params_t* params) {
 }
 
 void free_params_struct(params_t* parameters) {
-    uint64_t n = parameters->npoints;
-    uint64_t i = 0;
-    while(i < n) {
-        free(parameters->points_list[i].coordinates);
-        i++;
-    }
+    free(parameters->cluster_ids);
+    free(parameters->cluster_sizes);
     free(parameters->points_list);
 }

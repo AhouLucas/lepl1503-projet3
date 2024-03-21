@@ -30,6 +30,6 @@ uint64_t nbr_combinations(uint32_t k, uint32_t n);
  * @param memory Array used to buffer the combinations
  * @return int32_t 0 for success, -1 for failure or illegal arguments
  */
-int32_t generate_all_combinations(params_t* parameters, point_t* memory);
+int32_t generate_all_combinations(params_t* parameters, point_list_t memory);
 
 #endif

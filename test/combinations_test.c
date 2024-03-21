@@ -20,91 +20,88 @@ void test_binomial_numbers(void) {
 }
 
 static params_t* parameters;
-static point_t* init_pool;
-static point_t* buffer_combinations;
+static point_list_t init_pool;
+static point_list_t buffer_combinations;
 static uint32_t dimension = 2;
 
 int init(void) {
     parameters = (params_t*) malloc(sizeof(params_t));
     parameters->k = 3;
     parameters->n_first_initialization_points = 5;
-    init_pool = (point_t*) malloc(sizeof(point_t) * 5);
-    buffer_combinations = (point_t*) malloc(sizeof(point_t) * 30);
+    init_pool = (point_list_t) malloc(sizeof(int64_t) * 5 * dimension);
+    buffer_combinations = (point_list_t) malloc(sizeof(int64_t) * 30 * dimension);
 
     if(init_pool == NULL || buffer_combinations == NULL) return 1;
 
     for(uint32_t i = 0 ; i < 5 ; i++) {
-        point_t* p = init_pool+i;
-        p->dimension = dimension;
-        p->clusterID = 0;           // clusterID is irrelevant
-        int64_t* coord = (int64_t*) malloc(sizeof(int64_t) * dimension);
-        if(coord == NULL) {
-            printf("Error while creating init_pool point");
-        }
+        point_ptr_t p = get_point(init_pool, dimension, i);
         for(uint32_t j = 0 ; j < dimension ; j++) {
-            coord[j] = i+1;         // coordinates like (x,x) for easier verification
+            p[j] = i+1;         // coordinates like (x,x) for easier verification
         }
-        p->coordinates = coord;
     }
     parameters->points_list = init_pool;
 
     int32_t error = generate_all_combinations(parameters, buffer_combinations);
-    if(error == -1) return 1;
+    if(error != 0) return 1;
 
     return 0;
 }
 
 int teardown(void) {
-    free_points(init_pool, 5);
-    free_points(buffer_combinations, 30);
+    free(init_pool);
     free(parameters);
+    free(buffer_combinations);
     return 0;
 }
 
-void compare_points(point_t* p1, point_t* p2) {
-    CU_ASSERT_TRUE(compare_point(p1, p2));
+void compare_points(point_ptr_t p1, point_ptr_t p2) {
+    int r = 1;
+    for(uint32_t i = 0 ; i < dimension ; i++) {
+        if(p1[i] != p2[i]) r = 0;
+    }
+    CU_ASSERT_TRUE(r);
 }
 
 void test_combinations(void) {
-    compare_points(buffer_combinations+0, init_pool+0);
-    compare_points(buffer_combinations+1, init_pool+1);
-    compare_points(buffer_combinations+2, init_pool+2);
+    compare_points(get_point(buffer_combinations, dimension, 0), get_point(init_pool, dimension, 0));
+    compare_points(get_point(buffer_combinations, dimension, 1), get_point(init_pool, dimension, 1));
+    compare_points(get_point(buffer_combinations, dimension, 2), get_point(init_pool, dimension, 2));
 
-    compare_points(buffer_combinations+3, init_pool+0);
-    compare_points(buffer_combinations+4, init_pool+1);
-    compare_points(buffer_combinations+5, init_pool+3);
+    compare_points(get_point(buffer_combinations, dimension, 3), get_point(init_pool, dimension, 0));
+    compare_points(get_point(buffer_combinations, dimension, 4), get_point(init_pool, dimension, 1));
+    compare_points(get_point(buffer_combinations, dimension, 5), get_point(init_pool, dimension, 3));
 
-    compare_points(buffer_combinations+6, init_pool+0);
-    compare_points(buffer_combinations+7, init_pool+1);
-    compare_points(buffer_combinations+8, init_pool+4);
+    compare_points(get_point(buffer_combinations, dimension, 6), get_point(init_pool, dimension, 0));
+    compare_points(get_point(buffer_combinations, dimension, 7), get_point(init_pool, dimension, 1));
+    compare_points(get_point(buffer_combinations, dimension, 8), get_point(init_pool, dimension, 4));
 
-    compare_points(buffer_combinations+9, init_pool+0);
-    compare_points(buffer_combinations+10, init_pool+2);
-    compare_points(buffer_combinations+11, init_pool+3);
+    compare_points(get_point(buffer_combinations, dimension, 9), get_point(init_pool, dimension, 0));
+    compare_points(get_point(buffer_combinations, dimension, 10), get_point(init_pool, dimension, 2));
+    compare_points(get_point(buffer_combinations, dimension, 11), get_point(init_pool, dimension, 3));
 
-    compare_points(buffer_combinations+12, init_pool+0);
-    compare_points(buffer_combinations+13, init_pool+2);
-    compare_points(buffer_combinations+14, init_pool+4);
+    compare_points(get_point(buffer_combinations, dimension, 12), get_point(init_pool, dimension, 0));
+    compare_points(get_point(buffer_combinations, dimension, 13), get_point(init_pool, dimension, 2));
+    compare_points(get_point(buffer_combinations, dimension, 14), get_point(init_pool, dimension, 4));
 
-    compare_points(buffer_combinations+15, init_pool+0);
-    compare_points(buffer_combinations+16, init_pool+3);
-    compare_points(buffer_combinations+17, init_pool+4);
+    compare_points(get_point(buffer_combinations, dimension, 15), get_point(init_pool, dimension, 0));
+    compare_points(get_point(buffer_combinations, dimension, 16), get_point(init_pool, dimension, 3));
+    compare_points(get_point(buffer_combinations, dimension, 17), get_point(init_pool, dimension, 4));
 
-    compare_points(buffer_combinations+18, init_pool+1);
-    compare_points(buffer_combinations+19, init_pool+2);
-    compare_points(buffer_combinations+20, init_pool+3);
+    compare_points(get_point(buffer_combinations, dimension, 18), get_point(init_pool, dimension, 1));
+    compare_points(get_point(buffer_combinations, dimension, 19), get_point(init_pool, dimension, 2));
+    compare_points(get_point(buffer_combinations, dimension, 20), get_point(init_pool, dimension, 3));
 
-    compare_points(buffer_combinations+21, init_pool+1);
-    compare_points(buffer_combinations+22, init_pool+2);
-    compare_points(buffer_combinations+23, init_pool+4);
+    compare_points(get_point(buffer_combinations, dimension, 21), get_point(init_pool, dimension, 1));
+    compare_points(get_point(buffer_combinations, dimension, 22), get_point(init_pool, dimension, 2));
+    compare_points(get_point(buffer_combinations, dimension, 23), get_point(init_pool, dimension, 4));
 
-    compare_points(buffer_combinations+24, init_pool+1);
-    compare_points(buffer_combinations+25, init_pool+3);
-    compare_points(buffer_combinations+26, init_pool+4);
+    compare_points(get_point(buffer_combinations, dimension, 24), get_point(init_pool, dimension, 1));
+    compare_points(get_point(buffer_combinations, dimension, 25), get_point(init_pool, dimension, 3));
+    compare_points(get_point(buffer_combinations, dimension, 26), get_point(init_pool, dimension, 4));
 
-    compare_points(buffer_combinations+27, init_pool+2);
-    compare_points(buffer_combinations+28, init_pool+3);
-    compare_points(buffer_combinations+29, init_pool+4);
+    compare_points(get_point(buffer_combinations, dimension, 27), get_point(init_pool, dimension, 2));
+    compare_points(get_point(buffer_combinations, dimension, 28), get_point(init_pool, dimension, 3));
+    compare_points(get_point(buffer_combinations, dimension, 29), get_point(init_pool, dimension, 4));
 }
 
 int main(int argc, char* argv[]) {

@@ -5,33 +5,33 @@
 #include "../headers/params.h"
 
 int closest_centroid(params_t* params){
-    int k = params->k;
-    int num_points = params->npoints;
-    point_t* points = params->points_list;
-    point_t* centroids = params->centroids;
+    uint32_t k = params->k;
+    uint64_t num_points = params->npoints;
+    point_list_t points = params->points_list;
+    point_list_t centroids = params->centroids;
     squared_distance_func_t squared_distance_function = params->squared_distance_func;
     // Check for parameter and return -1 if there is a wrong parameter
-    if(centroids == NULL || points == NULL || k < 0 || num_points < 0 || squared_distance_function == NULL) {
+    if(centroids == NULL || points == NULL || squared_distance_function == NULL) {
         return -1;
     }
 
     int changed = 0;
     
-    for(int i = 0; i < num_points; i++) {   // For each point
-        point_t *p = points + i;//&points[i];
-        uint32_t oldClusterID = p->clusterID;  // Remember the old centroid to know if it has changed
+    for(uint32_t i = 0; i < num_points; i++) {   // For each point
+        point_ptr_t p = get_point(points, params->dimension, i);//&points[i];
+        uint32_t oldClusterID = params->cluster_ids[i];  // Remember the old centroid to know if it has changed
         uint64_t minDistance = UINT64_MAX;
 
-        for(int centroidIndex = 0; centroidIndex < k; centroidIndex++) {   // For each centroid
-            point_t *c = centroids + centroidIndex;
-            uint64_t dist = squared_distance_function(p, c); 
+        for(uint32_t centroidIndex = 0; centroidIndex < k; centroidIndex++) {   // For each centroid
+            point_ptr_t c = get_point(centroids, params->dimension, centroidIndex);
+            uint64_t dist = squared_distance_function(p, c, params->dimension); 
 
             if(dist < minDistance) {    // Update point clusterID if it's closer 
-                p->clusterID = (uint32_t) centroidIndex;
+                params->cluster_ids[i] = centroidIndex;
                 minDistance = dist;
             }
         }
-        if(p->clusterID != oldClusterID) {
+        if(params->cluster_ids[i] != oldClusterID) {
             changed = 1;
         }
     }

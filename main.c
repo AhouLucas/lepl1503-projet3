@@ -92,35 +92,56 @@ int parse_args(params_t *args, int argc, char *argv[]) {
 int main(int argc, char *argv[]) {
     params_t params;   // allocate the args on the stack
     if (parse_args(&params, argc, argv) != 0) {
+        if (params.input_stream != stdin) {
+            fclose(params.input_stream);
+        }
+        if (params.output_stream != stdout) {
+            fclose(params.output_stream);
+        }
         return EXIT_FAILURE;
     }
 
     if (params.n_first_initialization_points < params.k) {
         fprintf(stderr, "Cannot generate an instance of k-means with less initialization points than needed clusters: %"PRIu32" < %"PRIu32"\n",
                 params.n_first_initialization_points, params.k);
+
+        if (params.input_stream != stdin) {
+            fclose(params.input_stream);
+        }
+        if (params.output_stream != stdout) {
+            fclose(params.output_stream);
+        }
         return EXIT_FAILURE;
     }
     
     if (binary_parse(&params) != 0) {
+        if (params.input_stream != stdin) {
+            fclose(params.input_stream);
+        }
+        if (params.output_stream != stdout) {
+            fclose(params.output_stream);
+        }
         return EXIT_FAILURE;
     }
 
     write_header_csv(&params);
 
     uint64_t n_comb = nbr_combinations(params.k, params.n_first_initialization_points);
-    point_t* initial_centroids = (point_t*) malloc(sizeof(point_t) * params.k * n_comb);
+    point_list_t initial_centroids = (point_list_t) malloc(sizeof(int64_t) * params.k * n_comb * params.dimension);
 
     generate_all_combinations(&params, initial_centroids); // maybe should check for errors
 
     for (int i = 0; i < n_comb ; i++) { // TODO replace with combinations()
-        write_row_head_csv(&params, initial_centroids+(i*params.k));
-        params.centroids = initial_centroids+(i*params.k);
+        write_row_head_csv(&params, initial_centroids+(i*params.k*params.dimension));
+        params.centroids = initial_centroids+(i*params.k*params.dimension);
         kmeans(&params);
         write_row_tail_csv(&params, distortion(&params));
     }
 
     free(initial_centroids);
     free_params_struct(&params);
+
+    free(initial_centroids);
 
     // close the files opened by parse_args
     if (params.input_stream != stdin) {

@@ -6,6 +6,7 @@
 #include "point.h"
 #include "distance.h"
 
+
 typedef struct {
     FILE *input_stream;
     FILE *output_stream;
@@ -17,8 +18,10 @@ typedef struct {
 
     uint32_t dimension;
     uint64_t npoints;
-    point_t* points_list;
-    point_t* centroids;
-} params_t;
+    point_list_t points_list;
+    point_list_t centroids;
+    uint32_t *cluster_ids;
+    uint32_t *cluster_sizes;
+} __attribute__ ((aligned(16))) params_t;
 
 #endif
