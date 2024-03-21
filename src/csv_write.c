@@ -53,9 +53,9 @@ void write_row_head_csv(params_t *params, point_t *initialization_centroids) {
 
 void write_row_tail_csv(params_t *params, uint64_t distortion) {
     fprintf(params->output_stream, ",%ld,", distortion);
-
+    
     write_point_list(params->output_stream, params->centroids, params->k);
-
+    
     if (!params->quiet) {
         qsort(params->points_list, params->npoints, sizeof(point_t), cmp_points);
 
