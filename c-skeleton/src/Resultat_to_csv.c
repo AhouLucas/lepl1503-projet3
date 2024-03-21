@@ -61,7 +61,8 @@ int write_to_csv(params_t* input , point_t *initial_centroids, int distortion, p
             else {fprintf(output_file, ")");}
 
         }
-         
+
+
         fprintf(output_file, "]\"");
         // Ecriture des clusters 
         if (num_clusters > 0) {
