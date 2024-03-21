@@ -119,6 +119,7 @@ int main(int argc, char *argv[]) {
         write_row_tail_csv(&params, distortion(&params));
     }
 
+    free(initial_centroids);
     free_params_struct(&params);
 
     // close the files opened by parse_args
