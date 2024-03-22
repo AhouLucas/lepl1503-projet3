@@ -41,4 +41,8 @@ for i in range(1, 500, 10):
 
     end = time.time()
 
+    output = subprocess.run(["python3", "compare_solutions.py", "output-c.csv", "output-py.csv"], capture_output=True, text=True)
+
+    assert str(output.stdout) == "Ok.\n"
+
     c_perf.append(end - start)
