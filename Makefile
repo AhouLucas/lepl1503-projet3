@@ -28,19 +28,18 @@ $(TEST_BUILD_DIR)/%: $(TEST_DIR)/%.c $(OBJECTS)
 	@mkdir -p $(TEST_BUILD_DIR)
 	$(CC) $(INCLUDE_HEADERS_DIRECTORY) $(CFLAGS) -o $@ $^ $(LIBS)
 
-# Replace with: kmeans $(TESTS) when every test compiles
 tests: kmeans $(TESTS)
 	@set -e; \
-	echo -e "\n\033[1;32m[UNIT TESTS]\033[0m"; \
+	echo -e "\n[UNIT TESTS]"; \
 	for test in $(TEST_BUILD_DIR)/*; do \
-	    echo -e "\n\033[1;32mRunning $$test:\033[0m"; \
+	    echo -e "\n=> RUNNING $$test:"; \
 		$$test; \
 	done; \
-	echo -e "\n\033[1;32m[MEMORY TESTS]\033[0m\n"; \
+	echo -e "\n[MEMORY ANALYSIS]\n"; \
 	valgrind --error-exitcode=1 --leak-check=full ./kmeans -k 3 -p 5 ./scripts/exemple.bin -f output-test-temp.csv; \
-	echo -e "\n\033[1;32m[SYNTAX TESTS]\033[0m\n"; \
+	echo -e "\n[STATIC ANALYSIS]\n"; \
 	cppcheck --enable=all --error-exitcode=1 --suppress=missingIncludeSystem --suppress=unknownMacro .; \
-	echo -e "\n\033[1;32m[EXACTNESS TESTS]\033[0m\n"; \
+	echo -e "\n[PYTHON COMPATIBILITY]\n"; \
 	/bin/env python3 scripts/compare_solutions.py output-test-temp.csv scripts/output.csv; \
 
 	@rm output-test-temp.csv;
