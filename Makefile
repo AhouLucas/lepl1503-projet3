@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -Werror -Ofast -flto -g -std=c99
+CFLAGS=-Wall -Werror -Ofast -flto -g -std=gnu99
 LIBS=-lcunit
 
 SRC_DIR=src
