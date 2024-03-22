@@ -10,18 +10,28 @@ static point_list_t pool;
 static uint64_t combinations_index;
 static point_list_t memory;
 
-uint64_t fact_aux(uint64_t n, uint64_t r) {
-    if(n == 1) return r;
-    else return fact_aux(n-1, r*n);
+int min(int a, int b) {
+    if (a < b) {
+        return a;
+    } else {
+        return b;
+    }
 }
 
-uint64_t fact(uint64_t n) {
-    if(n == 0 || n == 1) return 1;
-    return fact_aux(n-1, n);
-}
-
+// Inspired by https://www.geeksforgeeks.org/binomial-coefficient-dp-9/
 uint64_t nbr_combinations(uint32_t k, uint32_t n) {
-    return fact(n)/(fact(n-k)*fact(k));
+    int C[k + 1];
+    memset(C, 0, sizeof(C));
+ 
+    C[0] = 1;
+ 
+    for (int i = 1; i <= n; i++) {
+        for (int j = min(i, k); j > 0; j--) {
+            C[j] = C[j] + C[j - 1];
+        }
+    }
+
+    return C[k];
 }
 
 static void generate_combination(point_list_t current_comb, uint32_t recursion, uint32_t j) {

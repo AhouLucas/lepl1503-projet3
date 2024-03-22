@@ -6,13 +6,6 @@
 #include <CUnit/Basic.h>
 #include <CUnit/CUnit.h>
 
-void test_factorial_simple(void) {
-    CU_ASSERT_EQUAL(fact(0), 1);
-    CU_ASSERT_EQUAL(fact(1), 1);
-    CU_ASSERT_EQUAL(fact(5), 120);
-    CU_ASSERT_EQUAL(fact(15), 1307674368000);
-}
-
 void test_binomial_numbers(void) {
     CU_ASSERT_EQUAL(nbr_combinations(10, 10), 1);
     CU_ASSERT_EQUAL(nbr_combinations(3, 5), 10);
@@ -122,8 +115,7 @@ int main(int argc, char* argv[]) {
         return CU_get_error();
     }
 
-    if((NULL == CU_add_test(pSuite1, "Test basic factorial results", test_factorial_simple))||
-        (NULL == CU_add_test(pSuite1, "Test simple binomial numbers", test_binomial_numbers))) {
+    if((NULL == CU_add_test(pSuite1, "Test simple binomial numbers", test_binomial_numbers))) {
         CU_cleanup_registry();
         return CU_get_error();
     }

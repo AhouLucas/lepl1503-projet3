@@ -6,14 +6,6 @@
 #include "params.h"
 
 /**
- * @brief Compute the factorial of n. (Tail-recursive)
- * 
- * @param n Positive integer
- * @return uint64_t the factorial of n, -1 if n < 0. (0! = 1! = 1)
- */
-uint64_t fact(uint64_t n);
-
-/**
  * @brief Compute the number of k-selection in a n-set.
  * 
  * @param k Number of elements picked
