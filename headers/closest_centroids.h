@@ -9,9 +9,10 @@
 
 
 /**
- * @brief Assign the index of the closest centroid to each point
- * @param params Struct with the parameters of the program
- * @return int -1 if an error occurred, 0 if no points have changed their closest centroid, 1 if at least one point has changed its closest centroid
+ * @brief Finds the closest centroid for each point in the dataset.
+ * 
+ * @param params The parameters containing the dataset and centroids.
+ * @return int Returns 0 if successful, and a non-zero error code otherwise.
  */
 int closest_centroid(params_t* params);
 
