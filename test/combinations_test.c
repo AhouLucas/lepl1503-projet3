@@ -55,7 +55,7 @@ int teardown(void) {
     return 0;
 }
 
-void compare_points(point_ptr_t p1, point_ptr_t p2) {
+void compare_points(const point_ptr_t p1, const point_ptr_t p2) {
     int r = 1;
     for(uint32_t i = 0 ; i < dimension ; i++) {
         if(p1[i] != p2[i]) {
