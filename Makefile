@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -Werror -Ofast -march=native -flto
+CFLAGS=-Wall -Werror -Ofast -march=native -flto -g
 LIBS=-lcunit
 
 SRC_DIR=src
@@ -37,10 +37,15 @@ tests: kmeans $(TESTS)
 	done
 
 	echo -e "\n\033[1;32m-- MEMORY TESTS --\033[0m"; \
-	valgrind --track-origins=yes ./kmeans -k 3 -p 5 ./scripts/exemple.bin -f build_test/output.csv
+	valgrind --track-origins=yes ./kmeans -k 3 -p 5 ./scripts/exemple.bin -f output-test.csv
+
+	echo -e "\n\033[1;32m-- SYNTAX TESTS --\033[0m"; \
+	cppcheck .
 
 	echo -e "\n\033[1;32m-- EXACTNESS TESTS --\033[0m"; \
-	/bin/env python3 scripts/compare_solutions.py build_test/output.csv scripts/output.csv
+	/bin/env python3 scripts/compare_solutions.py output-test.csv scripts/output.csv
+
+	rm output-test.csv
 
 clean:
 	rm -rf $(BUILD_DIR)
