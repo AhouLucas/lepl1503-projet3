@@ -14,7 +14,7 @@ inline static void write_point(FILE *stream, point_ptr_t point, uint32_t dim) {
     putc('(', stream);
 
     for (int i = 0; i < dim; i++) {
-        fprintf(stream, "%ld", point[i]);
+        fprintf(stream, "%"PRId64, point[i]);
 
         if (i < dim - 1) {
             fputs(", ", stream);
@@ -45,7 +45,7 @@ void write_row_head_csv(params_t *params, point_list_t initialization_centroids)
 }
 
 void write_row_tail_csv(params_t *params, uint64_t distortion) {
-    fprintf(params->output_stream, ",%lu,", distortion);
+    fprintf(params->output_stream, ",%"PRIu64",", distortion);
 
     write_point_list(params->output_stream, params->centroids, params->k, params->dimension);
 
