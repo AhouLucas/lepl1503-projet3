@@ -71,7 +71,7 @@ void test_check_file_content_and_size() {
         CU_FAIL("Could not get file size of temp.csv");
         return;
     }
-    long file_size = st.st_size;
+    off_t file_size = st.st_size;
 
     char expected_content[] = "initialization centroids,distortion,centroids,clusters\n\"[(1, 1), (2, 2), (3, 3)]\",12,\"[(1, 1), (2, 2), (3, 3)]\",\"[[], [(1, 1)], [(2, 2), (3, 3)]]\"\n";
     char actual_content[file_size + 1];
