@@ -112,12 +112,6 @@ int main() {
 
     unsigned int num_failures = CU_get_number_of_failures();
 
-    uint16_t a = 0;
-
-    if (a > 0){ 
-
-    }
-
     CU_cleanup_registry();
     return (num_failures == 0) ? 0 : 1;;
 }
