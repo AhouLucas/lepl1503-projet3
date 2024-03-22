@@ -7,21 +7,20 @@
 #include <CUnit/CUnit.h>
 
 params_t *params;
-point_t *centroids;
-point_t *points;
+point_list_t centroids;
+point_list_t points;
+uint32_t *cluster_ids;
 int32_t dimension;
 int k;
 int num_points;
 squared_distance_func_t squared_distance_function;
 
-point_t p1, p2, p3, p4, p5;
-point_t c1, c2, c3;
-
 int init_wrong_param_suite(void) {
     k = 3;
     num_points = 5;
-    centroids = (point_t*) malloc(k * sizeof(point_t));
-    points = (point_t*) malloc(num_points * sizeof(point_t));
+    centroids = (point_list_t) malloc(k * sizeof(point_list_t));
+    points = (point_list_t) malloc(num_points * sizeof(point_list_t));
+    cluster_ids = (uint32_t*) malloc(num_points * sizeof(uint32_t));
     params = (params_t*) malloc(sizeof(params_t));
     squared_distance_function = squared_euclidean_distance;
 
@@ -33,6 +32,7 @@ int init_wrong_param_suite(void) {
     params->npoints = num_points;
     params->squared_distance_func = squared_distance_function;
     params->points_list = points;
+    params->cluster_ids = cluster_ids;
     params->centroids = centroids;
     params->dimension = 2;
     return 0;
@@ -41,6 +41,7 @@ int init_wrong_param_suite(void) {
 int clean_wrong_param_suite(void) {
     free(centroids);
     free(points);
+    free(cluster_ids);
     free(params);
     return 0;
 }
@@ -60,20 +61,14 @@ void test_points_null(void) {
     CU_ASSERT_EQUAL(closest_centroid(params), -1);
 }
 
-void test_k_negative(void) {
+void test_cluster_ids_null(void) {
     params->points_list = points;
-    params->k = -1;
-    CU_ASSERT_EQUAL(closest_centroid(params), -1);
-}
-
-void test_num_points_negative(void) {
-    params->k = k;
-    params->npoints = -1;
+    params->cluster_ids = NULL;
     CU_ASSERT_EQUAL(closest_centroid(params), -1);
 }
 
 void test_squared_distance_function_null(void) {
-    params->npoints = num_points;
+    params->cluster_ids = cluster_ids;
     params->squared_distance_func = NULL;
     CU_ASSERT_EQUAL(closest_centroid(params), -1);
 }
@@ -84,44 +79,41 @@ int init_closest_centroids_suite(void) {
     dimension = 2;
     k = 3;
     num_points = 5;
-    centroids = (point_t*) malloc(k * sizeof(point_t));
-    points = (point_t*) malloc(num_points * sizeof(point_t));
+    centroids = (point_list_t) malloc(k * dimension * sizeof(int64_t));
+    points = (point_list_t) malloc(num_points * dimension * sizeof(int64_t));
+    cluster_ids = (uint32_t*) malloc(num_points * sizeof(uint32_t));
     params = (params_t*) malloc(sizeof(params_t));
     squared_distance_function = squared_euclidean_distance;
     if(centroids == NULL || points == NULL || params == NULL) {
         return 1;
     }
 
-    // Creates 3 centroids
-    point_t c1 = {dimension, (int64_t[]){0, 0}, 0};
-    point_t c2 = {dimension, (int64_t[]){1, 1}, 0};
-    point_t c3 = {dimension, (int64_t[]){-1, 1}, 0};
+    // Initialize centroids
+    centroids[0] = 0; centroids[1] = 0; // Centroid 0
+    centroids[2] = 1; centroids[3] = 1; // Centroid 1
+    centroids[4] = -1; centroids[5] = 1; // Centroid 2
 
-    // Creates 5 points
-    point_t p1 = {dimension, (int64_t[]){0, -1}, 1}; // Belongs to c1
-    point_t p2 = {dimension, (int64_t[]){2, 2}, 1}; // Belongs to c2
-    point_t p3 = {dimension, (int64_t[]){-2, 1}, 1}; // Belongs to c3
-    point_t p4 = {dimension, (int64_t[]){0, -2}, 1}; // Belongs to c1
-    point_t p5 = {dimension, (int64_t[]){0, 1}, 1}; // Equidistant to every centroid, so it should belong to c1
+    // Initialize points
+    points[0] = 0; points[1] = 0; // Point 0 : Centroid 0
+    points[2] = 2; points[3] = 1; // Point 1 : Centroid 1
+    points[4] = -1; points[5] = 2; // Point 2 : Centroid 2
+    points[6] = 0; points[7] = 1; // Point 3 : Centroid 0
+    points[8] = 0; points[9] = -2; // Point 4 : Centroid 0
 
-    centroids[0] = c1;
-    centroids[1] = c2;
-    centroids[2] = c3;
-
-    points[0] = p1;
-    points[1] = p2;
-    points[2] = p3;
-    points[3] = p4;
-    points[4] = p5;
+    // Initialize cluster_ids
+    cluster_ids[0] = 10;
+    cluster_ids[1] = 10;
+    cluster_ids[2] = 10;
+    cluster_ids[3] = 10;
+    cluster_ids[4] = 10;
 
     params->k = k;
     params->npoints = num_points;
     params->squared_distance_func = squared_distance_function;
     params->points_list = points;
     params->centroids = centroids;
+    params->cluster_ids = cluster_ids;
     params->dimension = dimension;
-    params->input_stream = NULL;
-    params->output_stream = NULL;
     params->n_threads = 1;
     params->n_first_initialization_points = 1;
     params->quiet = false;
@@ -132,6 +124,7 @@ int init_closest_centroids_suite(void) {
 int clean_closest_centroids_suite(void) {
     free(centroids);
     free(points);
+    free(cluster_ids);
     free(params);
     return 0;
 }
@@ -142,20 +135,20 @@ int clean_closest_centroids_suite(void) {
 
 void test_closest_centroids(void) {
     CU_ASSERT_EQUAL(closest_centroid(params), 1);
-    CU_ASSERT_EQUAL(points[0].clusterID, 0);
-    CU_ASSERT_EQUAL(points[1].clusterID, 1);
-    CU_ASSERT_EQUAL(points[2].clusterID, 2);
-    CU_ASSERT_EQUAL(points[3].clusterID, 0);
-    CU_ASSERT_EQUAL(points[4].clusterID, 0);
+    CU_ASSERT_EQUAL(params->cluster_ids[0], 0);
+    CU_ASSERT_EQUAL(params->cluster_ids[1], 1);
+    CU_ASSERT_EQUAL(params->cluster_ids[2], 2);
+    CU_ASSERT_EQUAL(params->cluster_ids[3], 0);
+    CU_ASSERT_EQUAL(params->cluster_ids[4], 0);
 }
 
 void test_closest_centroids_no_change(void) {
     CU_ASSERT_EQUAL(closest_centroid(params), 0);
-    CU_ASSERT_EQUAL(points[0].clusterID, 0);
-    CU_ASSERT_EQUAL(points[1].clusterID, 1);
-    CU_ASSERT_EQUAL(points[2].clusterID, 2);
-    CU_ASSERT_EQUAL(points[3].clusterID, 0);
-    CU_ASSERT_EQUAL(points[4].clusterID, 0);
+    CU_ASSERT_EQUAL(params->cluster_ids[0], 0);
+    CU_ASSERT_EQUAL(params->cluster_ids[1], 1);
+    CU_ASSERT_EQUAL(params->cluster_ids[2], 2);
+    CU_ASSERT_EQUAL(params->cluster_ids[3], 0);
+    CU_ASSERT_EQUAL(params->cluster_ids[4], 0);
 }
 
 int main() {
@@ -181,8 +174,6 @@ int main() {
     if (
         (NULL == CU_add_test(wrong_param_suite, "Test centroids NULL", test_centroids_null)) ||
         (NULL == CU_add_test(wrong_param_suite, "Test points NULL", test_points_null)) ||
-        (NULL == CU_add_test(wrong_param_suite, "Test k negative", test_k_negative)) ||
-        (NULL == CU_add_test(wrong_param_suite, "Test num_points negative", test_num_points_negative)) ||
         (NULL == CU_add_test(wrong_param_suite, "Test squared_distance_function NULL", test_squared_distance_function_null)) ||
         (NULL == CU_add_test(closest_centroids_suite, "Test closest centroids", test_closest_centroids)) ||
         (NULL == CU_add_test(closest_centroids_suite, "Test closest centroids no change", test_closest_centroids_no_change))
