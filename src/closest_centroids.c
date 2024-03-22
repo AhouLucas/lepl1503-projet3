@@ -11,7 +11,7 @@ int closest_centroid(params_t* params){
     point_list_t centroids = params->centroids;
     squared_distance_func_t squared_distance_function = params->squared_distance_func;
     // Check for parameter and return -1 if there is a wrong parameter
-    if(centroids == NULL || points == NULL || squared_distance_function == NULL) {
+    if(centroids == NULL || points == NULL || params->cluster_ids == NULL || squared_distance_function == NULL) {
         return -1;
     }
 
