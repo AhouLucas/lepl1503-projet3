@@ -18,7 +18,7 @@ void usage(const char *prog_name) {
     fprintf(stderr, "    -d distance (manhattan by default): can be either \"euclidean\" or \"manhattan\". Chooses the distance formula to use by the algorithm to compute the distance between the points\n");
 }
 
-int parse_args(params_t *args, int argc, char *argv[]) {
+static inline void parse_args(params_t *args, int argc, char *argv[]) {
     memset(args, 0, sizeof(params_t));    // set everything to 0 by default
     // the default values are the following, they will be changed depending on the arguments given to the program
     args->k = 2;
@@ -36,7 +36,7 @@ int parse_args(params_t *args, int argc, char *argv[]) {
                 temp = atoi(optarg);
                 if (temp <= 0) {
                     fprintf(stderr, "Wrong number of threads. Needs a positive integer, received \"%s\"\n", optarg);
-                    return -1;
+                    exit(EXIT_FAILURE);
                 } else {
                     args->n_threads = temp;
                 }
@@ -45,7 +45,7 @@ int parse_args(params_t *args, int argc, char *argv[]) {
                 temp = atoi(optarg);
                 if (temp <= 0) {
                     fprintf(stderr, "Wrong number of initialization points. Needs a positive integer, received \"%s\"\n", optarg);
-                    return -1;
+                    exit(EXIT_FAILURE);
                 } else {
                     args->n_first_initialization_points = temp;
                 }
@@ -54,7 +54,7 @@ int parse_args(params_t *args, int argc, char *argv[]) {
                 temp = atoi(optarg);
                 if (temp <= 0) {
                     fprintf(stderr, "Wrong k. Needs a positive integer, received \"%s\"\n", optarg);
-                    return -1;
+                    exit(EXIT_FAILURE);
                 } else {
                     args->k = temp;
                 }
@@ -63,7 +63,7 @@ int parse_args(params_t *args, int argc, char *argv[]) {
                 args->output_stream = fopen(optarg, "w");
                 if (!args->output_stream) {
                     fprintf(stderr, "could not open output file %s: %s\n", optarg, strerror(errno));
-                    return -1;
+                    exit(EXIT_FAILURE);
                 }
                 break;
             case 'q':
@@ -76,10 +76,10 @@ int parse_args(params_t *args, int argc, char *argv[]) {
                 break;
             case '?':
                 usage(argv[0]);
-                return -1;
+                exit(0);
             default:
                 usage(argv[0]);
-                return -1;
+                exit(0);
         }
     }
 
@@ -88,25 +88,19 @@ int parse_args(params_t *args, int argc, char *argv[]) {
     } else {
         args->input_stream = fopen(argv[optind], "r");
         if (!args->input_stream) {
+            if (args->output_stream != stdout) {
+                fclose(args->output_stream);
+            }
+
             fprintf(stderr, "could not open file %s: %s\n", argv[optind], strerror(errno));
-            return -1;
+            exit(EXIT_FAILURE);
         }
     }
-
-    return 0;
 }
 
 int main(int argc, char *argv[]) {
     params_t params;   // allocate the args on the stack
-    if (parse_args(&params, argc, argv) != 0) {
-        if (params.input_stream != stdin) {
-            fclose(params.input_stream);
-        }
-        if (params.output_stream != stdout) {
-            fclose(params.output_stream);
-        }
-        return EXIT_FAILURE;
-    }
+    parse_args(&params, argc, argv);
 
     if (params.n_first_initialization_points < params.k) {
         fprintf(stderr, "Cannot generate an instance of k-means with less initialization points than needed clusters: %"PRIu32" < %"PRIu32"\n",

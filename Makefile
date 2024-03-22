@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -Werror -Ofast -march=native -flto -g
+CFLAGS=-Wall -Werror -Ofast -flto -g
 LIBS=-lcunit
 
 SRC_DIR=src
