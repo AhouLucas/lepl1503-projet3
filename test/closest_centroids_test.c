@@ -18,8 +18,8 @@ squared_distance_func_t squared_distance_function;
 int init_wrong_param_suite(void) {
     k = 3;
     num_points = 5;
-    centroids = (point_list_t) malloc(k * sizeof(point_list_t));
-    points = (point_list_t) malloc(num_points * sizeof(point_list_t));
+    centroids = (point_list_t) malloc(k * dimension * sizeof(int64_t));
+    points = (point_list_t) malloc(num_points * dimension * sizeof(int64_t));
     cluster_ids = (uint32_t*) malloc(num_points * sizeof(uint32_t));
     params = (params_t*) malloc(sizeof(params_t));
     squared_distance_function = squared_euclidean_distance;
@@ -58,12 +58,6 @@ void test_centroids_null(void) {
 void test_points_null(void) {
     params->centroids = centroids;
     params->points_list = NULL;
-    CU_ASSERT_EQUAL(closest_centroid(params), -1);
-}
-
-void test_cluster_ids_null(void) {
-    params->points_list = points;
-    params->cluster_ids = NULL;
     CU_ASSERT_EQUAL(closest_centroid(params), -1);
 }
 

@@ -45,7 +45,7 @@ void write_row_head_csv(params_t *params, point_list_t initialization_centroids)
 }
 
 void write_row_tail_csv(params_t *params, uint64_t distortion) {
-    fprintf(params->output_stream, ",%ld,", distortion);
+    fprintf(params->output_stream, ",%lu,", distortion);
 
     write_point_list(params->output_stream, params->centroids, params->k, params->dimension);
 

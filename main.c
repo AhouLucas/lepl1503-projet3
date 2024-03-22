@@ -7,7 +7,7 @@
 #include "headers/distortion.h"
 #include "headers/kmeans.h"
 
-void usage(char *prog_name) {
+void usage(const char *prog_name) {
     fprintf(stderr, "USAGE:\n");
     fprintf(stderr, "    %s [-p n_combinations_points] [-n n_threads] [input_filename]\n", prog_name);
     fprintf(stderr, "    -k n_clusters (default value: 2): the number of clusters to compute\n");
@@ -28,28 +28,35 @@ int parse_args(params_t *args, int argc, char *argv[]) {
     args->quiet = false;
     args->squared_distance_func = squared_manhattan_distance;
     int opt;
+    int32_t temp;
     while ((opt = getopt(argc, argv, "n:p:k:f:d:q")) != -1) {
         switch (opt)
         {
             case 'n':
-                args->n_threads = atoi(optarg);
-                if (args->n_threads <= 0) {
+                temp = atoi(optarg);
+                if (temp <= 0) {
                     fprintf(stderr, "Wrong number of threads. Needs a positive integer, received \"%s\"\n", optarg);
                     return -1;
+                } else {
+                    args->n_threads = temp;
                 }
                 break;
             case 'p':
-                args->n_first_initialization_points = atoi(optarg);
-                if (args->n_first_initialization_points <= 0) {
+                temp = atoi(optarg);
+                if (temp <= 0) {
                     fprintf(stderr, "Wrong number of initialization points. Needs a positive integer, received \"%s\"\n", optarg);
                     return -1;
+                } else {
+                    args->n_first_initialization_points = temp;
                 }
                 break;
             case 'k':
-                args->k = atoi(optarg);
-                if (args->k <= 0) {
+                temp = atoi(optarg);
+                if (temp <= 0) {
                     fprintf(stderr, "Wrong k. Needs a positive integer, received \"%s\"\n", optarg);
                     return -1;
+                } else {
+                    args->k = temp;
                 }
                 break;
             case 'f':

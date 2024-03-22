@@ -15,7 +15,7 @@ void test_assert_npoints(void) {
 
 void test_assert_points_equals(void) {
     for (size_t i = 0; i < 7; i++) {
-        point_ptr_t point = get_point(parameters.points_list, parameters.dimension, i);
+        // point_ptr_t point = get_point(parameters.points_list, parameters.dimension, i);
     }
     CU_ASSERT_TRUE(1);
 }
@@ -30,8 +30,7 @@ int init(void) {
 
     uint32_t output = binary_parse(&parameters);
     fclose(file);
-    printf("%d",output);
-    return 0;
+    return output;
 }
 
 int teardown(void) {
