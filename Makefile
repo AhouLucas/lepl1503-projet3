@@ -40,7 +40,7 @@ tests: kmeans $(TESTS)
 	valgrind --track-origins=yes ./kmeans -k 3 -p 5 ./scripts/exemple.bin -f output-test.csv
 
 	echo -e "\n\033[1;32m-- SYNTAX TESTS --\033[0m"; \
-	cppcheck .
+	cppcheck --enable=all --suppress=missingIncludeSystem --suppress=unknownMacro .
 
 	echo -e "\n\033[1;32m-- EXACTNESS TESTS --\033[0m"; \
 	/bin/env python3 scripts/compare_solutions.py output-test.csv scripts/output.csv
