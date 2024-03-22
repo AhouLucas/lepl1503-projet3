@@ -11,5 +11,8 @@
 #include <getopt.h>
 #include <errno.h>
 #include <inttypes.h>
+#include <endian.h>
+#include "portable_semaphore.h"
+#include "portable_endian.h"
 
 #endif // COMMON_H
