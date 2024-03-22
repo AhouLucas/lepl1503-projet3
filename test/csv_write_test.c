@@ -71,7 +71,7 @@ void test_check_file_content_and_size() {
         CU_FAIL("Could not get file size of temp.csv");
         return;
     }
-    off_t file_size = st.st_size;
+    long file_size = st.st_size;
 
     char expected_content[] = "initialization centroids,distortion,centroids,clusters\n\"[(1, 1), (2, 2), (3, 3)]\",12,\"[(1, 1), (2, 2), (3, 3)]\",\"[[], [(1, 1)], [(2, 2), (3, 3)]]\"\n";
     char actual_content[file_size + 1];
@@ -111,12 +111,6 @@ int main() {
     CU_basic_run_tests();
 
     unsigned int num_failures = CU_get_number_of_failures();
-
-    uint16_t a = 0;
-
-    if (a > 0){ 
-
-    }
 
     CU_cleanup_registry();
     return (num_failures == 0) ? 0 : 1;;
