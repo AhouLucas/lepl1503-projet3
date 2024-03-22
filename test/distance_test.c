@@ -4,26 +4,21 @@
 #include <CUnit/Basic.h>
 #include <CUnit/CUnit.h>
 
-
 int32_t dimension;
-point_t p1, p2;
-
+point_ptr_t p1, p2;
 
 int init_points_suite(void){
-    dimension = 2;
-    p1.dimension = dimension;
-    p1.coordinates = (int64_t*) malloc(dimension * sizeof(int64_t));
-    p2.dimension = dimension;
-    p2.coordinates = (int64_t*) malloc(dimension * sizeof(int64_t));
-    if(p1.coordinates == NULL || p2.coordinates == NULL) {
+    p1 = (int64_t*) malloc(dimension * sizeof(int64_t));
+    p2 = (int64_t*) malloc(dimension * sizeof(int64_t));
+    if(p1 == NULL || p2 == NULL) {
         return -1;
     }
     return 0;
 }
 
 int clean_points_suite(void){
-    free(p1.coordinates);
-    free(p2.coordinates);
+    free(p1);
+    free(p2);
     return 0;
 }
 
@@ -32,59 +27,59 @@ int clean_points_suite(void){
 */
 
 void test_manhattan_distance(void) {
-    p1.coordinates[0] = 0;
-    p1.coordinates[1] = 0;
-    p2.coordinates[0] = 0;
-    p2.coordinates[1] = 0;
-    CU_ASSERT_EQUAL(squared_manhattan_distance(&p1, &p2), 0);
-    p1.coordinates[0] = 0;
-    p1.coordinates[1] = 0;
-    p2.coordinates[0] = 1;
-    p2.coordinates[1] = 1;
-    CU_ASSERT_EQUAL(squared_manhattan_distance(&p1, &p2), 4);
-    p1.coordinates[0] = 0;
-    p1.coordinates[1] = 0;
-    p2.coordinates[0] = 1;
-    p2.coordinates[1] = 0;
-    CU_ASSERT_EQUAL(squared_manhattan_distance(&p1, &p2), 1);
-    p1.coordinates[0] = 0;
-    p1.coordinates[1] = 0;
-    p2.coordinates[0] = 0;
-    p2.coordinates[1] = 1;
-    CU_ASSERT_EQUAL(squared_manhattan_distance(&p1, &p2), 1);
-    p1.coordinates[0] = 0;
-    p1.coordinates[1] = 0;
-    p2.coordinates[0] = 1;
-    p2.coordinates[1] = 2;
-    CU_ASSERT_EQUAL(squared_manhattan_distance(&p1, &p2), 9);
+    p1[0] = 0;
+    p1[1] = 0;
+    p2[0] = 0;
+    p2[1] = 0;
+    CU_ASSERT_EQUAL(squared_manhattan_distance(p1, p2, 2), 0);
+    p1[0] = 0;
+    p1[1] = 0;
+    p2[0] = 1;
+    p2[1] = 1;
+    CU_ASSERT_EQUAL(squared_manhattan_distance(p1, p2, 2), 4);
+    p1[0] = 0;
+    p1[1] = 0;
+    p2[0] = 1;
+    p2[1] = 0;
+    CU_ASSERT_EQUAL(squared_manhattan_distance(p1, p2, 2), 1);
+    p1[0] = 0;
+    p1[1] = 0;
+    p2[0] = 0;
+    p2[1] = 1;
+    CU_ASSERT_EQUAL(squared_manhattan_distance(p1, p2, 2), 1);
+    p1[0] = 0;
+    p1[1] = 0;
+    p2[0] = 1;
+    p2[1] = 2;
+    CU_ASSERT_EQUAL(squared_manhattan_distance(p1, p2, 2), 9);
 }
 
 void test_euclidean_distance(void) {
-    p1.coordinates[0] = 0;
-    p1.coordinates[1] = 0;
-    p2.coordinates[0] = 0;
-    p2.coordinates[1] = 0;
-    CU_ASSERT_EQUAL(squared_euclidean_distance(&p1, &p2), 0);
-    p1.coordinates[0] = 0;
-    p1.coordinates[1] = 0;
-    p2.coordinates[0] = 1;
-    p2.coordinates[1] = 1;
-    CU_ASSERT_EQUAL(squared_euclidean_distance(&p1, &p2), 2);
-    p1.coordinates[0] = 0;
-    p1.coordinates[1] = 0;
-    p2.coordinates[0] = 1;
-    p2.coordinates[1] = 0;
-    CU_ASSERT_EQUAL(squared_euclidean_distance(&p1, &p2), 1);
-    p1.coordinates[0] = 0;
-    p1.coordinates[1] = 0;
-    p2.coordinates[0] = 0;
-    p2.coordinates[1] = 1;
-    CU_ASSERT_EQUAL(squared_euclidean_distance(&p1, &p2), 1);
-    p1.coordinates[0] = 0;
-    p1.coordinates[1] = 0;
-    p2.coordinates[0] = 1;
-    p2.coordinates[1] = 2;
-    CU_ASSERT_EQUAL(squared_euclidean_distance(&p1, &p2), 5);
+    p1[0] = 0;
+    p1[1] = 0;
+    p2[0] = 0;
+    p2[1] = 0;
+    CU_ASSERT_EQUAL(squared_euclidean_distance(p1, p2, 2), 0);
+    p1[0] = 0;
+    p1[1] = 0;
+    p2[0] = 1;
+    p2[1] = 1;
+    CU_ASSERT_EQUAL(squared_euclidean_distance(p1, p2, 2), 2);
+    p1[0] = 0;
+    p1[1] = 0;
+    p2[0] = 1;
+    p2[1] = 0;
+    CU_ASSERT_EQUAL(squared_euclidean_distance(p1, p2, 2), 1);
+    p1[0] = 0;
+    p1[1] = 0;
+    p2[0] = 0;
+    p2[1] = 1;
+    CU_ASSERT_EQUAL(squared_euclidean_distance(p1, p2, 2), 1);
+    p1[0] = 0;
+    p1[1] = 0;
+    p2[0] = 1;
+    p2[1] = 2;
+    CU_ASSERT_EQUAL(squared_euclidean_distance(p1, p2, 2), 5);
 }
 
 int main() {

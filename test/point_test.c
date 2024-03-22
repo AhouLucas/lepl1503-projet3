@@ -2,55 +2,37 @@
 #include <CUnit/Basic.h>
 #include "../headers/point.h"
 
-point_t p1 = {2, (int64_t[]){1, 1}, 0};
-point_t p2;
-point_t p3 = {2, (int64_t[]){1, 1}, 0};
-point_t p4 = {2, (int64_t[]){1, 2}, 0};
+void test_get_point(void) {
+    uint32_t dim = 2;
+    int64_t points[] = {
+            1, 1,
+            2, 2,
+            3, 3,
+    };
 
-void test_create_point(void) {
-    point_t p = create_point(2, (int64_t[]){1, 1}, 0);
-    CU_ASSERT_TRUE(compare_point(&p, &p1));
-    free(p.coordinates);
+    point_ptr_t p1 = get_point(points, dim, 0);
+    point_ptr_t p3 = get_point(points, dim, 2);
+
+    CU_ASSERT_EQUAL(p1[0], 1)
+    CU_ASSERT_EQUAL(p1[1], 1)
+    CU_ASSERT_EQUAL(p3[0], 3)
+    CU_ASSERT_EQUAL(p3[1], 3)
 }
 
-void test_copy_point(void) {
-    int r = copy_point(&p2, &p1);
-    CU_ASSERT_FALSE(r);
-    CU_ASSERT_TRUE(compare_point(&p1, &p2));
-}
-
-void test_print_point(void) {
-    print_point(&p1, 1);
-    CU_ASSERT_TRUE(1);
-}
-
-void test_compare_point(void) {
-    CU_ASSERT_TRUE(compare_point(&p1, &p3));
-    CU_ASSERT_FALSE(compare_point(&p1, &p4));
-}
-
-int teardown(void) {
-    free(p2.coordinates);
-}
-
-int main(int argc, char* argv[]) {
-
+int main() {
     if (CUE_SUCCESS != CU_initialize_registry()) {
         return CU_get_error();
     }
 
     CU_pSuite pSuite = NULL;
 
-    pSuite = CU_add_suite("Point utils", NULL, teardown);
+    pSuite = CU_add_suite("Point utils", NULL, NULL);
     if (NULL == pSuite) {
         CU_cleanup_registry();
         return CU_get_error();
     }
 
-    if((NULL == CU_add_test(pSuite, "Compare", test_compare_point))||
-        (NULL == CU_add_test(pSuite, "Copy", test_copy_point))||
-        (NULL == CU_add_test(pSuite, "Create", test_create_point))||
-        (NULL == CU_add_test(pSuite, "Print", test_print_point))) {
+    if((NULL == CU_add_test(pSuite, "Get", test_get_point))) {
         CU_cleanup_registry();
         return CU_get_error();
     }

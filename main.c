@@ -141,8 +141,6 @@ int main(int argc, char *argv[]) {
     free(initial_centroids);
     free_params_struct(&params);
 
-    free(initial_centroids);
-
     // close the files opened by parse_args
     if (params.input_stream != stdin) {
         fclose(params.input_stream);

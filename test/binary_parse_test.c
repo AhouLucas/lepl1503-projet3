@@ -15,18 +15,21 @@ void test_assert_npoints(void) {
 
 void test_assert_points_equals(void) {
     for (size_t i = 0; i < 7; i++) {
-        point_t point = parameters.points_list[i];
-        printf("(%d,%d)",point.coordinates[0],point.coordinates[1]);
+        point_ptr_t point = get_point(parameters.points_list, parameters.dimension, i);
+        printf("(%ld,%ld)",point[0],point[1]);
     }
     CU_ASSERT_TRUE(1);
 }
 
 int init(void) {
-    FILE* file = fopen("../../python/exemple.bin", "r");
+    FILE* file = fopen("scripts/exemple.bin", "r");
     if(file == NULL) {
         return 1;
     }
-    uint32_t output = binary_parse(file, &parameters);
+
+    parameters.input_stream = file;
+
+    uint32_t output = binary_parse(&parameters);
     fclose(file);
     printf("%d",output);
     return 0;
@@ -37,18 +40,20 @@ int teardown(void) {
     return 0;
 }
 
-int main(int argc, char* argv[]) {
+int main() {
     CU_pSuite pSuite = NULL;
 
     if (CUE_SUCCESS != CU_initialize_registry()) {
         return CU_get_error();
     }
 
+
     pSuite = CU_add_suite("Ma suite", init, teardown);
     if (NULL == pSuite) {
         CU_cleanup_registry();
         return CU_get_error();
     }
+
 
     if( (NULL == CU_add_test(pSuite, "Test assert dim", test_assert_dimension)) ||
         (NULL == CU_add_test(pSuite, "Test assert npoints", test_assert_npoints)) ||
@@ -57,8 +62,8 @@ int main(int argc, char* argv[]) {
         return CU_get_error();
     }
 
+    CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
-    CU_basic_show_failures(CU_get_failure_list());
     CU_cleanup_registry();
-    return 0;
+    return CU_get_error();
 }

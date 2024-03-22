@@ -29,11 +29,11 @@ typedef uint64_t (*squared_distance_func_t) (const point_ptr_t, const point_ptr_
 /**
  * @return the squared manhattan distance between 2 points
  */
-uint64_t squared_manhattan_distance(const point_ptr_t p1, const point_ptr_t p2, uint32_t distance);
+uint64_t squared_manhattan_distance(const point_ptr_t p1, const point_ptr_t p2, uint32_t dim);
 
 /**
  * @return the squared euclidean distance between 2 points
  */
-uint64_t squared_euclidean_distance(const point_ptr_t p1, const point_ptr_t p2, uint32_t distance);
+uint64_t squared_euclidean_distance(const point_ptr_t p1, const point_ptr_t p2, uint32_t dim);
 
 #endif //DISTANCE_H

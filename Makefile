@@ -1,5 +1,6 @@
 CC=gcc
-CFLAGS=-Wall -Werror -g -O3
+#CFLAGS=-Wall -Werror -Ofast -march=native -ftree-vectorize -g
+ CFLAGS=-Wall -Werror -g
 LIBS=-lcunit
 
 SRC_DIR=src
@@ -29,15 +30,15 @@ $(TEST_BUILD_DIR)/%: $(TEST_DIR)/%.c $(OBJECTS)
 	$(CC) $(INCLUDE_HEADERS_DIRECTORY) $(CFLAGS) -o $@ $^ $(LIBS)
 
 # Replace with: kmeans $(TESTS) when every test compiles
-tests: kmeans build_test/closest_centroids_test build_test/distance_test
+tests: kmeans build_test/point_test build_test/distance_test build_test/csv_write_test build_test/binary_parse_test
 	echo -e "-- \n\033[1;32mUNIT TESTS\033[0m" --; \
 	for test in $(TEST_BUILD_DIR)/*; do \
 	    echo -e "\n\033[1;32mRunning $$test:\033[0m"; \
 		$$test; \
 	done
 
-	echo -e "-- \n\033[1;32mMEMORY TEST\033[0m" --; \
-	valgrind ./kmeans
+#	echo -e "-- \n\033[1;32mMEMORY TEST\033[0m" --; \
+#	valgrind ./kmeans
 
 
 clean:

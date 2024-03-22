@@ -5,8 +5,7 @@
 #include <sys/stat.h>
 
 static FILE* temp_file = NULL;
-static FILE* verif = NULL ; 
-int distortion  ; 
+int distortion_value  ;
 
 int init_suite() {
     temp_file = fopen("temp.csv", "w+");
@@ -16,60 +15,47 @@ int init_suite() {
 
 int clean_suite() {
     if (fclose(temp_file) == 0) {
-        return -1;
+        return 0;
     } else {
         temp_file = NULL;
-        return 0;
+        return -1;
     }
 }
 
 
 
 void test_write_row() {
-    int64_t p1[] = {1, 1};
-    int64_t p2[] = {2, 2};
-    int64_t p3[] = {3, 4};
-    distortion = 12 ;
-    
-    
-     
-
-    point_t initialization_centroids[] = {
-        (point_t){ .clusterID = 1, .dimension = 2, .coordinates = p1 },
-        (point_t){ .clusterID = 2, .dimension = 2, .coordinates = p2 },
-        (point_t){ .clusterID = 3, .dimension = 2, .coordinates = p3 },
-    };
-    point_t final_centroids[] = {
-        (point_t){ .clusterID = 1, .dimension = 2, .coordinates = p1 },
-        (point_t){ .clusterID = 2, .dimension = 2, .coordinates = p2 },
-        (point_t){ .clusterID = 3, .dimension = 2, .coordinates = p3 },
+    int64_t points[] = {
+            1, 1,
+            2, 2,
+            3, 3,
     };
 
-    point_t points[] = {
-        (point_t){ .clusterID = 1, .dimension = 2, .coordinates = p1 },
-        (point_t){ .clusterID = 2, .dimension = 2, .coordinates = p2 },
-        (point_t){ .clusterID = 3, .dimension = 2, .coordinates = p3 },
-        (point_t){ .clusterID = 3, .dimension = 2, .coordinates = p1 },
-        (point_t){ .clusterID = 3, .dimension = 2, .coordinates = p2 },
+    uint32_t cluster_ids[] = {1, 2, 2};
+    int64_t centroids[] = {
+            1, 1,
+            2, 2,
+            3, 3,
     };
-    init_suite() ; 
+
+    distortion_value = 12 ;
+    
+    init_suite() ;
     params_t params = {
-        .centroids = initialization_centroids,
+        .centroids = centroids,
         .points_list = points,
-        .npoints = 5,
+        .npoints = 3,
         .quiet = false,
         .k = 3,
+        .dimension = 2,
+        .cluster_ids = cluster_ids,
         .output_stream = temp_file,
     };
     write_header_csv(&params) ; 
-    write_row_head_csv(&params , final_centroids) ; 
-    write_row_tail_csv(&params , distortion);
+    write_row_head_csv(&params , centroids) ;
+    write_row_tail_csv(&params , distortion_value);
     
     fflush(temp_file);
-    clean_suite() ; 
-
-    
-
 }
 void test_check_file_content_and_size() {
     FILE* temp_file_read = fopen("temp.csv", "r");
@@ -87,7 +73,7 @@ void test_check_file_content_and_size() {
     }
     off_t file_size = st.st_size;
 
-    char expected_content[] = "initialization centroids,distortion,centroids,clusters\n\"[(1, 1), (2, 2), (3, 4)]\",12,\"[(1, 1), (2, 2), (3, 4)]\",\"[[(1, 1)], [(2, 2)], [(3, 4), (1, 1), (2, 2)]]\"\n";
+    char expected_content[] = "initialization centroids,distortion,centroids,clusters\n\"[(1, 1), (2, 2), (3, 3)]\",12,\"[(1, 1), (2, 2), (3, 3)]\",\"[[], [(1, 1)], [(2, 2), (3, 3)]]\"\n";
     char actual_content[file_size + 1];
 
     size_t bytes_read = fread(actual_content, 1, file_size, temp_file_read);
@@ -98,11 +84,7 @@ void test_check_file_content_and_size() {
     }
     fclose(temp_file_read);
 
-    actual_content[file_size] = '\0'; 
-
-    // printf("Expected content:\n%s\n", expected_content);
-    // printf("Actual content:\n%s\n", actual_content);
-    // printf("Bytes read by fread: %zu\n", bytes_read);
+    actual_content[file_size] = '\0';
 
     CU_ASSERT_STRING_EQUAL(actual_content, expected_content);
 }

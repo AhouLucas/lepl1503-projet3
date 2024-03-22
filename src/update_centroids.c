@@ -18,7 +18,7 @@ void update_centroids(params_t* params){
 
     for (size_t i = 0; i < params->k; i++) {
         for (size_t j = 0; j < params->dimension; j++) {
-            uint32_t mean = get_point(params->centroids, params->dimension, i)[j] / params->cluster_sizes[i];
+            int64_t mean = get_point(params->centroids, params->dimension, i)[j] / params->cluster_sizes[i];
             get_point(params->centroids, params->dimension, i)[j] = mean;
         }
     }
