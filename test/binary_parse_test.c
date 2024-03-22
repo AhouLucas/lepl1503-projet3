@@ -16,7 +16,6 @@ void test_assert_npoints(void) {
 void test_assert_points_equals(void) {
     for (size_t i = 0; i < 7; i++) {
         point_ptr_t point = get_point(parameters.points_list, parameters.dimension, i);
-        printf("(%ld,%ld)",point[0],point[1]);
     }
     CU_ASSERT_TRUE(1);
 }
