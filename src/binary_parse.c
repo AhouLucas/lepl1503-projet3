@@ -23,12 +23,24 @@ uint32_t binary_parse(params_t* params) {
     params->npoints = n;
 
     point_list_t points = (point_list_t)malloc(n * dim * sizeof(int64_t));
+
+    if (points == NULL) {
+        return -1;
+    }
+
     params->cluster_ids = calloc(n * dim, sizeof(uint32_t));
+
+    if(params->cluster_ids == NULL) {
+        free(points);
+        return -1;
+    }
+
     params->cluster_sizes = malloc(n * dim * sizeof(uint32_t));
 
-    if(points == NULL || params->cluster_ids == NULL || params->cluster_sizes == NULL) {
-        printf("Couldn't malloc in binary_parse");
-        exit(EXIT_FAILURE);
+    if (params->cluster_sizes == NULL) {
+        free(points);
+        free(params->cluster_ids);
+        return -1;
     }
 
     params->points_list = points;

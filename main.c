@@ -35,6 +35,10 @@ static inline void parse_args(params_t *args, int argc, char *argv[]) {
             case 'n':
                 temp = atoi(optarg);
                 if (temp <= 0) {
+                    if (args->output_stream != stdout) {
+                        fclose(args->output_stream);
+                    }
+
                     fprintf(stderr, "Wrong number of threads. Needs a positive integer, received \"%s\"\n", optarg);
                     exit(EXIT_FAILURE);
                 } else {
@@ -44,6 +48,10 @@ static inline void parse_args(params_t *args, int argc, char *argv[]) {
             case 'p':
                 temp = atoi(optarg);
                 if (temp <= 0) {
+                    if (args->output_stream != stdout) {
+                        fclose(args->output_stream);
+                    }
+
                     fprintf(stderr, "Wrong number of initialization points. Needs a positive integer, received \"%s\"\n", optarg);
                     exit(EXIT_FAILURE);
                 } else {
@@ -53,6 +61,10 @@ static inline void parse_args(params_t *args, int argc, char *argv[]) {
             case 'k':
                 temp = atoi(optarg);
                 if (temp <= 0) {
+                    if (args->output_stream != stdout) {
+                        fclose(args->output_stream);
+                    }
+
                     fprintf(stderr, "Wrong k. Needs a positive integer, received \"%s\"\n", optarg);
                     exit(EXIT_FAILURE);
                 } else {
@@ -75,11 +87,17 @@ static inline void parse_args(params_t *args, int argc, char *argv[]) {
                 }
                 break;
             case '?':
+                if (args->output_stream != stdout) {
+                    fclose(args->output_stream);
+                }
                 usage(argv[0]);
-                exit(0);
+                exit(EXIT_SUCCESS);
             default:
+                if (args->output_stream != stdout) {
+                    fclose(args->output_stream);
+                }
                 usage(argv[0]);
-                exit(0);
+                exit(EXIT_SUCCESS);
         }
     }
 
@@ -101,28 +119,20 @@ static inline void parse_args(params_t *args, int argc, char *argv[]) {
 int main(int argc, char *argv[]) {
     params_t params;   // allocate the args on the stack
     parse_args(&params, argc, argv);
+    int result = EXIT_SUCCESS;
 
     if (params.n_first_initialization_points < params.k) {
         fprintf(stderr, "Cannot generate an instance of k-means with less initialization points than needed clusters: %"PRIu32" < %"PRIu32"\n",
                 params.n_first_initialization_points, params.k);
 
-        if (params.input_stream != stdin) {
-            fclose(params.input_stream);
-        }
-        if (params.output_stream != stdout) {
-            fclose(params.output_stream);
-        }
-        return EXIT_FAILURE;
+        result = EXIT_FAILURE;
+        goto cleanup;
     }
     
     if (binary_parse(&params) != 0) {
-        if (params.input_stream != stdin) {
-            fclose(params.input_stream);
-        }
-        if (params.output_stream != stdout) {
-            fclose(params.output_stream);
-        }
-        return EXIT_FAILURE;
+        result = EXIT_FAILURE;
+        fprintf(stderr, "Failed parse binary file!\n");
+        goto cleanup;
     }
 
     write_header_csv(&params);
@@ -130,7 +140,24 @@ int main(int argc, char *argv[]) {
     uint64_t n_comb = nbr_combinations(params.k, params.n_first_initialization_points);
     point_list_t initial_centroids = (point_list_t) malloc(sizeof(int64_t) * params.k * n_comb * params.dimension);
 
-    generate_all_combinations(&params, initial_centroids); // maybe should check for errors
+    if (initial_centroids == NULL) {
+        free_params_struct(&params);
+
+        fprintf(stderr, "Failed to allocate enought space for the initial centroids!\n");
+        result = EXIT_FAILURE;
+
+        goto cleanup;
+    }
+
+    if (generate_all_combinations(&params, initial_centroids) != 0) {
+        free_params_struct(&params);
+
+        fprintf(stderr, "Failed to generate point combinations!\n");
+        result = EXIT_FAILURE;
+
+        goto cleanup;
+
+    }
 
     for (int i = 0; i < n_comb ; i++) { // TODO replace with combinations()
         write_row_head_csv(&params, initial_centroids+(i*params.k*params.dimension));
@@ -142,12 +169,13 @@ int main(int argc, char *argv[]) {
     free(initial_centroids);
     free_params_struct(&params);
 
-    // close the files opened by parse_args
+cleanup:
     if (params.input_stream != stdin) {
         fclose(params.input_stream);
     }
     if (params.output_stream != stdout) {
         fclose(params.output_stream);
     }
-    return 0;
+
+    return result;
 }
