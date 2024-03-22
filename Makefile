@@ -30,22 +30,20 @@ $(TEST_BUILD_DIR)/%: $(TEST_DIR)/%.c $(OBJECTS)
 
 # Replace with: kmeans $(TESTS) when every test compiles
 tests: kmeans $(TESTS)
-	@echo -e "\n\033[1;32m-- UNIT TESTS --\033[0m"; \
+	@set -e; \
+	echo -e "\n\033[1;32m[UNIT TESTS]\033[0m"; \
 	for test in $(TEST_BUILD_DIR)/*; do \
 	    echo -e "\n\033[1;32mRunning $$test:\033[0m"; \
 		$$test; \
-	done
+	done; \
+	echo -e "\n\033[1;32m[MEMORY TESTS]\033[0m\n"; \
+	valgrind --error-exitcode=1 --leak-check=full ./kmeans -k 3 -p 5 ./scripts/exemple.bin -f output-test-temp.csv; \
+	echo -e "\n\033[1;32m[SYNTAX TESTS]\033[0m\n"; \
+	cppcheck --enable=all --error-exitcode=1 --suppress=missingIncludeSystem --suppress=unknownMacro .; \
+	echo -e "\n\033[1;32m[EXACTNESS TESTS]\033[0m\n"; \
+	/bin/env python3 scripts/compare_solutions.py output-test-temp.csv scripts/output.csv; \
 
-	@echo -e "\n\033[1;32m-- MEMORY TESTS --\033[0m"; \
-	valgrind --track-origins=yes ./kmeans -k 3 -p 5 ./scripts/exemple.bin -f output-test-temp.csv
-
-	@echo -e "\n\033[1;32m-- SYNTAX TESTS --\033[0m"; \
-	cppcheck --enable=all --suppress=missingIncludeSystem --suppress=unknownMacro .
-
-	@echo -e "\n\033[1;32m-- EXACTNESS TESTS --\033[0m"; \
-	/bin/env python3 scripts/compare_solutions.py output-test-temp.csv scripts/output.csv
-
-	@rm output-test-temp.csv
+	@rm output-test-temp.csv;
 
 clean:
 	rm -rf $(BUILD_DIR)
