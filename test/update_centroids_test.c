@@ -6,117 +6,129 @@
 
 
 params_t* params;
-
-
-point_t c1, c2, c3, c4;
-point_t p1, p2, p3, p4, p5, p6;
+uint32_t k;
+uint64_t npoints;
+uint32_t dimension;
+point_list_t centroids;
+point_list_t points;
+uint32_t *cluster_ids;
+uint32_t *cluster_sizes;
 
 int init_wrong(void) {
+    k = 3;
+    npoints = 9;
+    dimension = 2;
     params = (params_t*) malloc(sizeof(params_t));
-    if(params==NULL){return -1;}
-    params->k = 4;
-    params->npoints = 6;
-    params->dimension = 2;
-    params->centroids = (point_t*) malloc(params->k * sizeof(point_t));
-    params->points_list = (point_t*) malloc(params->npoints * sizeof(point_t));
-    if(params->centroids == NULL || params->points_list == NULL) {
+    centroids = (point_list_t) malloc(k * dimension * sizeof(int64_t));
+    points = (point_list_t) malloc(npoints * dimension * sizeof(int64_t));
+    cluster_ids = (uint32_t*) malloc(npoints * sizeof(uint32_t));
+    cluster_sizes = (uint32_t*) malloc(k * sizeof(uint32_t));
+    if(params==NULL || centroids==NULL || points==NULL || cluster_ids==NULL || cluster_sizes==NULL) {
         return -1;
     }
+
+    params->k = k;
+    params->npoints = npoints;
+    params->dimension = dimension;
+    params->centroids = centroids;
+    params->points_list = points;
+    params->cluster_ids = cluster_ids;
+    params->cluster_sizes = cluster_sizes;
+
     return 0;
 }
 
 void test_wrong_input(void){
-    point_t* centroids = params->centroids;
-    point_t* points_list =params->points_list;
     params->centroids = NULL;
     CU_ASSERT_EQUAL(update_centroids(params), -1);
     params->centroids = centroids;
-    params->points_list=NULL;
+    params->points_list = NULL;
     CU_ASSERT_EQUAL(update_centroids(params), -1);
-    params->points_list=points_list;
-    params->k=-1;
+    params->points_list = points;
+    params->cluster_ids = NULL;
     CU_ASSERT_EQUAL(update_centroids(params), -1);
-    params->k=4;
-    params->npoints=-1;
+    params->cluster_ids = cluster_ids;
+    params->cluster_sizes = NULL;
     CU_ASSERT_EQUAL(update_centroids(params), -1);
+    params->cluster_sizes = cluster_sizes;
 }
 
 int clean(void) {
-    free(params->centroids);
-    free(params->points_list);
     free(params);
+    free(centroids);
+    free(points);
+    free(cluster_ids);
+    free(cluster_sizes);
     return 0;
 }
 
 int init_right(void){
+    k = 3;
+    npoints = 9;
+    dimension = 2;
     params = (params_t*) malloc(sizeof(params_t));
-    if(params==NULL){return -1;}
-    params->k = 4;
-    params->npoints = 6;
-    params->dimension = 2;
-    params->centroids = (point_t*) malloc(params->k * sizeof(point_t));
-    params->points_list = (point_t*) malloc(params->npoints * sizeof(point_t));
-    if(params->centroids == NULL || params->points_list == NULL) {
-        return -1;
+    centroids = (point_list_t) malloc(k * dimension * sizeof(int64_t));
+    points = (point_list_t) malloc(npoints * dimension * sizeof(int64_t));
+    cluster_ids = (uint32_t*) malloc(npoints * sizeof(uint32_t));
+    cluster_sizes = (uint32_t*) malloc(k * sizeof(uint32_t));
+
+    if(params == NULL || centroids == NULL || points == NULL || cluster_ids == NULL || cluster_sizes == NULL) {
+        return 1;
     }
+
+    // Initialize the centroids
+    centroids[0] = 0; centroids[1] = 0; // centroid 0
+    centroids[2] = 0; centroids[3] = 0; // centroid 1
+    centroids[4] = 0; centroids[5] = 0; // centroid 2
+
+    // Initialize the points
+    points[0] = 0; points[1] = 0; // point 0
+    points[2] = 1; points[3] = 0; // point 1
+    points[4] = 2; points[5] = 0; // point 2
+    points[6] = 0; points[7] = 1; // point 3
+    points[8] = 0; points[9] = 2; // point 4
+    points[10] = 0; points[11] = 3; // point 5
+    points[12] = 1; points[13] = 1; // point 6
+    points[14] = 2; points[15] = 2; // point 7
+    points[16] = 3; points[17] = 3; // point 8
+
+    // Initialize the cluster_ids
+    cluster_ids[0] = 0;
+    cluster_ids[1] = 0;
+    cluster_ids[2] = 0;
+    cluster_ids[3] = 1;
+    cluster_ids[4] = 1;
+    cluster_ids[5] = 1;
+    cluster_ids[6] = 2;
+    cluster_ids[7] = 2;
+    cluster_ids[8] = 2;
+
+    params->k = k;
+    params->npoints = npoints;
+    params->dimension = dimension;
+    params->points_list = points;
+    params->cluster_ids = cluster_ids;
+    params->centroids = centroids;
+    params->cluster_sizes = cluster_sizes; 
+
     return 0;
 }
 
 
 void test_classic(void){
-    
-    point_t c1 = {params->dimension, (int64_t[]){0, -1}, 0};
-    point_t c2 = {params->dimension, (int64_t[]){1, 1}, 1};
-    point_t c3 = {params->dimension, (int64_t[]){-1, 1}, 2};
-    point_t c4 = {params->dimension, (int64_t[]){-5, -5}, 3}; //empty cluster
-
-    point_t p1 = {params->dimension, (int64_t[]){2, -2}, 0};
-    point_t p2 = {params->dimension, (int64_t[]){2, 2}, 1};
-    point_t p3 = {params->dimension, (int64_t[]){-2, 1}, 2};
-    point_t p4 = {params->dimension, (int64_t[]){0, -2}, 0};
-    point_t p5 = {params->dimension, (int64_t[]){2, 0}, 1};
-    point_t p6 = {params->dimension, (int64_t[]){-2, 3}, 2};
-
-    params->centroids[0] = c1;
-    params->centroids[1] = c2;
-    params->centroids[2] = c3;
-    params->centroids[3] = c4;
-
-    params->points_list[0] = p1;
-    params->points_list[1] = p2;
-    params->points_list[2] = p3;
-    params->points_list[3] = p4;
-    params->points_list[4] = p5;
-    params->points_list[5] = p6;
-    CU_ASSERT_EQUAL(update_centroids(params), 1);
-    CU_ASSERT_EQUAL(params->centroids[0].coordinates[0], 1);
-    CU_ASSERT_EQUAL(params->centroids[0].coordinates[1], -2);
-    CU_ASSERT_EQUAL(params->centroids[1].coordinates[0], 2);
-    CU_ASSERT_EQUAL(params->centroids[1].coordinates[1], 1);
-    CU_ASSERT_EQUAL(params->centroids[2].coordinates[0], -2);
-    CU_ASSERT_EQUAL(params->centroids[2].coordinates[1], 2);
-    CU_ASSERT_EQUAL(params->centroids[3].coordinates[0], -5);
-    CU_ASSERT_EQUAL(params->centroids[3].coordinates[1], -5);
-
-    //test if centroids are already in the center
     CU_ASSERT_EQUAL(update_centroids(params), 0);
-    CU_ASSERT_EQUAL(params->centroids[0].coordinates[0], 1);
-    CU_ASSERT_EQUAL(params->centroids[0].coordinates[1], -2);
-    CU_ASSERT_EQUAL(params->centroids[1].coordinates[0], 2);
-    CU_ASSERT_EQUAL(params->centroids[1].coordinates[1], 1);
-    CU_ASSERT_EQUAL(params->centroids[2].coordinates[0], -2);
-    CU_ASSERT_EQUAL(params->centroids[2].coordinates[1], 2);
-    CU_ASSERT_EQUAL(params->centroids[3].coordinates[0], -5);
-    CU_ASSERT_EQUAL(params->centroids[3].coordinates[1], -5);
-
-
+    CU_ASSERT_EQUAL(get_point(params->centroids, params->dimension, 0)[0], 1);
+    CU_ASSERT_EQUAL(get_point(params->centroids, params->dimension, 0)[1], 0);
+    CU_ASSERT_EQUAL(get_point(params->centroids, params->dimension, 1)[0], 0);
+    CU_ASSERT_EQUAL(get_point(params->centroids, params->dimension, 1)[1], 2);
+    CU_ASSERT_EQUAL(get_point(params->centroids, params->dimension, 2)[0], 2);
+    CU_ASSERT_EQUAL(get_point(params->centroids, params->dimension, 2)[1], 2);
 }
 
 
 int main(){
     CU_pSuite wrong_input = NULL;
     CU_pSuite test = NULL;
-    CU_pSuite no_change = NULL;
 
     if (CUE_SUCCESS != CU_initialize_registry()) {
         return CU_get_error();

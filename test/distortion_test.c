@@ -7,46 +7,51 @@
 #include "../headers/distance.h"
 
 params_t *params;
-point_t *centroids;
-point_t *points;
-
-point_t p1, p2, p3, p4, p5;
-point_t c1, c2, c3;
+point_list_t centroids;
+point_list_t points;
+uint32_t *cluster_ids;
+int32_t dimension;
+uint32_t k;
+uint64_t num_points;
 
 int init_distortion_suite(void) {
+    dimension = 2;
+    k = 3;
+    num_points = 5;
     params = (params_t*) malloc(sizeof(params_t));
-    centroids = (point_t*) malloc(3 * sizeof(point_t));
-    points = (point_t*) malloc(5 * sizeof(point_t));
+    centroids = (point_list_t) malloc(k * dimension * sizeof(int64_t));
+    points = (point_list_t) malloc(num_points * dimension * sizeof(int64_t));
+    cluster_ids = (uint32_t*) malloc(num_points * sizeof(uint32_t));
 
-    if(params == NULL || centroids == NULL || points == NULL) {
+    if(params == NULL || centroids == NULL || points == NULL || cluster_ids == NULL) {
         return 1;
     }
 
-    params->k = 3;
-    params->npoints = 5;
+    // Initialize the centroids
+    centroids[0] = 0; centroids[1] = 0; // centroid 0
+    centroids[2] = 1; centroids[3] = 1; // centroid 1
+    centroids[4] = -1; centroids[5] = 1; // centroid 2
+
+    // Initialize the points
+    points[0] = 0; points[1] = 0; // point 0
+    points[2] = 2; points[3] = 2; // point 1
+    points[4] = -2; points[5] = 2; // point 2
+    points[6] = 1; points[7] = 1; // point 3
+    points[8] = -1; points[9] = 2; // point 4
+
+    // Initialize the cluster_ids
+    cluster_ids[0] = 0;
+    cluster_ids[1] = 1;
+    cluster_ids[2] = 2;
+    cluster_ids[3] = 1;
+    cluster_ids[4] = 2;
+
+    params->k = k;
+    params->npoints = num_points;
+    params->dimension = dimension;
     params->squared_distance_func = squared_euclidean_distance;
-
-    p1 = create_point(2, (int64_t[]) {1, 1}, 1);
-    p2 = create_point(2, (int64_t[]) {-1, 2}, 2);
-    p3 = create_point(2, (int64_t[]) {0, 0}, 0);
-    p4 = create_point(2, (int64_t[]) {0, -1}, 0);
-    p5 = create_point(2, (int64_t[]) {2, 2}, 1);
-
-    c1 = create_point(2, (int64_t[]) {0, 0}, 0);
-    c2 = create_point(2, (int64_t[]) {1, 1}, 0);
-    c3 = create_point(2, (int64_t[]) {-1, 1}, 0);
-
-    points[0] = p1;
-    points[1] = p2;
-    points[2] = p3;
-    points[3] = p4;
-    points[4] = p5;
-
-    centroids[0] = c1;
-    centroids[1] = c2;
-    centroids[2] = c3;
-
     params->points_list = points;
+    params->cluster_ids = cluster_ids;
     params->centroids = centroids;
 
     return 0;
@@ -56,12 +61,13 @@ int clean_distortion_suite(void) {
     free(params);
     free(centroids);
     free(points);
+    free(cluster_ids);
     return 0;
 }
 
 
 void test_distortion(void) {
-    CU_ASSERT_EQUAL(distortion(params), 4);
+    CU_ASSERT_EQUAL(distortion(params), 5);
 }
 
 void test_distortion_null_centroids(void) {
@@ -75,13 +81,17 @@ void test_distortion_null_points(void) {
     CU_ASSERT_EQUAL(distortion(params), -1);
 }
 
-
-void test_distortion_negative_k(void) {
-    params->npoints = 5;
-    params->k = -1;
+void test_distortion_null_distance_func(void) {
+    params->points_list = points;
+    params->squared_distance_func = NULL;
     CU_ASSERT_EQUAL(distortion(params), -1);
 }
 
+void test_distortion_null_cluster_ids(void) {
+    params->squared_distance_func = squared_euclidean_distance;
+    params->cluster_ids = NULL;
+    CU_ASSERT_EQUAL(distortion(params), -1);
+}
 
 
 int main() {
@@ -100,7 +110,8 @@ int main() {
     if (CU_add_test(pSuite, "test_distortion", test_distortion) == NULL ||
         CU_add_test(pSuite, "test_distortion_null_centroids", test_distortion_null_centroids) == NULL ||
         CU_add_test(pSuite, "test_distortion_null_points", test_distortion_null_points) == NULL ||
-        CU_add_test(pSuite, "test_distortion_negative_k", test_distortion_negative_k) == NULL) {
+        CU_add_test(pSuite, "test_distortion_null_distance_func", test_distortion_null_distance_func) == NULL ||
+        CU_add_test(pSuite, "test_distortion_null_cluster_ids", test_distortion_null_cluster_ids) == NULL){
         CU_cleanup_registry();
         return CU_get_error();
     }
