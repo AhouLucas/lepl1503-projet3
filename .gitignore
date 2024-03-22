@@ -1,3 +1,7 @@
 build/
 build_test/
+.vscode/
+.idea/
+cachegrind.out.*
+callgrind.out.*
 kmeans

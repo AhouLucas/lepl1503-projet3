@@ -1,6 +1,5 @@
 CC=gcc
-#CFLAGS=-Wall -Werror -Ofast -march=native -ftree-vectorize -g
- CFLAGS=-Wall -Werror -g
+CFLAGS=-Wall -Werror -Ofast -march=native -flto
 LIBS=-lcunit
 
 SRC_DIR=src
@@ -30,16 +29,18 @@ $(TEST_BUILD_DIR)/%: $(TEST_DIR)/%.c $(OBJECTS)
 	$(CC) $(INCLUDE_HEADERS_DIRECTORY) $(CFLAGS) -o $@ $^ $(LIBS)
 
 # Replace with: kmeans $(TESTS) when every test compiles
-tests: kmeans build_test/point_test build_test/distance_test build_test/csv_write_test build_test/binary_parse_test
-	echo -e "-- \n\033[1;32mUNIT TESTS\033[0m" --; \
+tests: kmeans $(TESTS)
+	echo -e "\n\033[1;32m-- UNIT TESTS --\033[0m"; \
 	for test in $(TEST_BUILD_DIR)/*; do \
 	    echo -e "\n\033[1;32mRunning $$test:\033[0m"; \
 		$$test; \
 	done
 
-#	echo -e "-- \n\033[1;32mMEMORY TEST\033[0m" --; \
-#	valgrind ./kmeans
+	echo -e "\n\033[1;32m-- MEMORY TESTS --\033[0m"; \
+	valgrind --track-origins=yes ./kmeans -k 3 -p 5 ./scripts/exemple.bin -f build_test/output.csv
 
+	echo -e "\n\033[1;32m-- EXACTNESS TESTS --\033[0m"; \
+	/bin/env python3 scripts/compare_solutions.py build_test/output.csv scripts/output.csv
 
 clean:
 	rm -rf $(BUILD_DIR)

@@ -23,7 +23,7 @@ uint32_t binary_parse(params_t* params) {
     params->npoints = n;
 
     point_list_t points = (point_list_t)malloc(n * dim * sizeof(int64_t));
-    params->cluster_ids = malloc(n * dim * sizeof(uint32_t));
+    params->cluster_ids = calloc(n * dim, sizeof(uint32_t));
     params->cluster_sizes = malloc(n * dim * sizeof(uint32_t));
 
     if(points == NULL) {
