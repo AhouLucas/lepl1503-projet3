@@ -40,6 +40,7 @@ int init(void) {
         }
     }
     parameters->points_list = init_pool;
+    parameters->dimension = dimension;
 
     int32_t error = generate_all_combinations(parameters, buffer_combinations);
     if(error != 0) return 1;
@@ -57,7 +58,10 @@ int teardown(void) {
 void compare_points(point_ptr_t p1, point_ptr_t p2) {
     int r = 1;
     for(uint32_t i = 0 ; i < dimension ; i++) {
-        if(p1[i] != p2[i]) r = 0;
+        if(p1[i] != p2[i]) {
+            r = 0;
+            break;
+        }
     }
     CU_ASSERT_TRUE(r);
 }
