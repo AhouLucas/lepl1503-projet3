@@ -45,6 +45,7 @@ tests: kmeans $(TESTS)
 
 	@rm output-temp-py.csv;
 	@rm output-temp-c.csv;
+	@rm temp.csv;
 
 clean:
 	rm -rf $(BUILD_DIR)
