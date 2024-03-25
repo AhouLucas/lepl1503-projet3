@@ -26,7 +26,7 @@ static inline void parse_args(params_t *args, int argc, char *argv[]) {
     args->n_threads = 1;
     args->output_stream = stdout;
     args->quiet = false;
-    args->squared_distance_func = squared_manhattan_distance;
+    args->squared_distance_func = SQUARED_DISTANCE_MANHATTAN;
     int opt;
     int32_t temp;
     while ((opt = getopt(argc, argv, "n:p:k:f:d:q")) != -1) {
@@ -83,7 +83,7 @@ static inline void parse_args(params_t *args, int argc, char *argv[]) {
                 break;
             case 'd':
                 if (strcmp("euclidean", optarg) == 0) {
-                    args->squared_distance_func = squared_euclidean_distance;
+                    args->squared_distance_func = SQUARED_DISTANCE_EUCLIDEAN;
                 }
                 break;
             case '?':
