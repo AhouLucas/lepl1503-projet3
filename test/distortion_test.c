@@ -49,7 +49,7 @@ int init_distortion_suite(void) {
     params->k = k;
     params->npoints = num_points;
     params->dimension = dimension;
-    params->squared_distance_func = squared_euclidean_distance;
+    params->squared_distance_func = SQUARED_DISTANCE_EUCLIDEAN;
     params->points_list = points;
     params->cluster_ids = cluster_ids;
     params->centroids = centroids;
@@ -81,14 +81,8 @@ void test_distortion_null_points(void) {
     CU_ASSERT_EQUAL(distortion(params), -1);
 }
 
-void test_distortion_null_distance_func(void) {
-    params->points_list = points;
-    params->squared_distance_func = NULL;
-    CU_ASSERT_EQUAL(distortion(params), -1);
-}
-
 void test_distortion_null_cluster_ids(void) {
-    params->squared_distance_func = squared_euclidean_distance;
+    params->squared_distance_func = SQUARED_DISTANCE_EUCLIDEAN;
     params->cluster_ids = NULL;
     CU_ASSERT_EQUAL(distortion(params), -1);
 }
@@ -110,7 +104,6 @@ int main() {
     if (CU_add_test(pSuite, "test_distortion", test_distortion) == NULL ||
         CU_add_test(pSuite, "test_distortion_null_centroids", test_distortion_null_centroids) == NULL ||
         CU_add_test(pSuite, "test_distortion_null_points", test_distortion_null_points) == NULL ||
-        CU_add_test(pSuite, "test_distortion_null_distance_func", test_distortion_null_distance_func) == NULL ||
         CU_add_test(pSuite, "test_distortion_null_cluster_ids", test_distortion_null_cluster_ids) == NULL){
         CU_cleanup_registry();
         return CU_get_error();
