@@ -35,7 +35,7 @@ int init(void) {
     parameters->points_list = init_pool;
     parameters->dimension = dimension;
 
-    int32_t error = generate_all_combinations(parameters, buffer_combinations);
+    int32_t error = generate_all_combinations_iter(parameters, buffer_combinations);
     if(error != 0) return 1;
 
     return 0;
@@ -52,6 +52,8 @@ void compare_points(const point_ptr_t p1, const point_ptr_t p2) {
     int r = 1;
     for(uint32_t i = 0 ; i < dimension ; i++) {
         if(p1[i] != p2[i]) {
+            printf("%ld", p1[i]);
+            printf("%ld", p2[i]);
             r = 0;
             break;
         }

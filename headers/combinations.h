@@ -24,4 +24,15 @@ uint64_t nbr_combinations(uint32_t k, uint32_t n);
  */
 int32_t generate_all_combinations(params_t* parameters, point_list_t memory);
 
+/**
+ * @brief Generates all combinations of k-selection in a n-set. Should replicate the behaviour of itertools.combinations (Python)
+ * Takes in a pointer that must have been malloc with size=nbr_combinations(k, n).
+ * Iterative version.
+ * 
+ * @param parameters Structure containing the set of points used to form combinations, k and the n.
+ * @param memory Array used to buffer the combinations
+ * @return int32_t 0 for success, -1 for failure or illegal arguments
+ */
+int32_t generate_all_combinations_iter(params_t* parameters, point_list_t memory);
+
 #endif
