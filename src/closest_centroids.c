@@ -11,7 +11,7 @@ int closest_centroid(params_t* params){
     point_list_t centroids = params->centroids;
     squared_distance_func_t squared_distance_function = params->squared_distance_func;
     // Check for parameter and return -1 if there is a wrong parameter
-    if(centroids == NULL || points == NULL || params->cluster_ids == NULL || squared_distance_function == NULL) {
+    if(centroids == NULL || points == NULL || params->cluster_ids == NULL) {
         return -1;
     }
 
@@ -24,7 +24,19 @@ int closest_centroid(params_t* params){
 
         for(uint32_t centroidIndex = 0; centroidIndex < k; centroidIndex++) {   // For each centroid
             point_ptr_t c = get_point(centroids, params->dimension, centroidIndex);
-            uint64_t dist = squared_distance_function(p, c, params->dimension); 
+            uint64_t dist;
+
+            switch (squared_distance_function) {
+            case SQUARED_DISTANCE_MANHATTAN/* constant-expression */:
+                dist = squared_manhattan_distance(p, c, params->dimension);
+                break;
+            case SQUARED_DISTANCE_EUCLIDEAN:
+                dist = squared_euclidean_distance(p, c, params->dimension);
+                break;
+            default:
+                dist = 0;
+                break;
+            }
 
             if(dist < minDistance) {    // Update point clusterID if it's closer 
                 params->cluster_ids[i] = centroidIndex;

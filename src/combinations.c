@@ -97,8 +97,7 @@ int32_t generate_all_combinations(params_t* parameters, point_list_t mem) {
     point_list_t buffer = (point_list_t) malloc(sizeof(int64_t) * k * dim);
 
     if (buffer == NULL) {
-        printf("Couldn't malloc in generate_all_combinations");
-        exit(EXIT_FAILURE);
+        return -1;
     }
 
     generate_combination(buffer, 0, 0);

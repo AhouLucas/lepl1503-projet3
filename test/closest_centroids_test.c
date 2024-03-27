@@ -22,7 +22,7 @@ int init_wrong_param_suite(void) {
     points = (point_list_t) malloc(num_points * dimension * sizeof(int64_t));
     cluster_ids = (uint32_t*) malloc(num_points * sizeof(uint32_t));
     params = (params_t*) malloc(sizeof(params_t));
-    squared_distance_function = squared_euclidean_distance;
+    squared_distance_function = SQUARED_DISTANCE_EUCLIDEAN;
 
     if(centroids == NULL || points == NULL || params == NULL) {
         return 1;
@@ -61,14 +61,6 @@ void test_points_null(void) {
     CU_ASSERT_EQUAL(closest_centroid(params), -1);
 }
 
-void test_squared_distance_function_null(void) {
-    params->cluster_ids = cluster_ids;
-    params->squared_distance_func = NULL;
-    CU_ASSERT_EQUAL(closest_centroid(params), -1);
-}
-
-
-
 int init_closest_centroids_suite(void) {
     dimension = 2;
     k = 3;
@@ -77,7 +69,7 @@ int init_closest_centroids_suite(void) {
     points = (point_list_t) malloc(num_points * dimension * sizeof(int64_t));
     cluster_ids = (uint32_t*) malloc(num_points * sizeof(uint32_t));
     params = (params_t*) malloc(sizeof(params_t));
-    squared_distance_function = squared_euclidean_distance;
+    squared_distance_function = SQUARED_DISTANCE_EUCLIDEAN;
     if(centroids == NULL || points == NULL || params == NULL) {
         return 1;
     }
@@ -168,7 +160,6 @@ int main() {
     if (
         (NULL == CU_add_test(wrong_param_suite, "Test centroids NULL", test_centroids_null)) ||
         (NULL == CU_add_test(wrong_param_suite, "Test points NULL", test_points_null)) ||
-        (NULL == CU_add_test(wrong_param_suite, "Test squared_distance_function NULL", test_squared_distance_function_null)) ||
         (NULL == CU_add_test(closest_centroids_suite, "Test closest centroids", test_closest_centroids)) ||
         (NULL == CU_add_test(closest_centroids_suite, "Test closest centroids no change", test_closest_centroids_no_change))
     ) {

@@ -3,8 +3,8 @@ import json
 
 points = set()
 
-for _ in range(1_000_000):
-    points.add(tuple([random.randint(0, 1_000_000) for _ in range(2)]))
+for _ in range(1_000):
+    points.add(tuple([random.randint(-1_000, 1_000) for _ in range(3)]))
 
 res = {
     "vectors": list(points)
