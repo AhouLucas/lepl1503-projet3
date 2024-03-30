@@ -35,7 +35,7 @@ uint64_t nbr_combinations(uint32_t k, uint32_t n) {
 }
 
 static uint32_t generate_indices(uint64_t* indices) {   // updates k indices for the next combination
-    uint32_t i, j;
+    int32_t i, j;
     for (i=k-1 ; i >= 0 && indices[i] == i+n-k ; i--);  // find most right indice that can be incremented
     if (i < 0) return 0;                                // if none, i = -1 so all combinations made
     indices[i]++;

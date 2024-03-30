@@ -40,7 +40,6 @@ void test_write_row() {
 
     distortion_value = 12 ;
     
-    init_suite() ;
     params_t params = {
         .centroids = centroids,
         .points_list = points,
