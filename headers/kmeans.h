@@ -12,6 +12,7 @@ typedef struct {
     size_t start_idx;
     size_t end_idx;
     pthread_barrier_t* barrier;
+    bool *cancel;
 } thread_data_t;
 
 /**
