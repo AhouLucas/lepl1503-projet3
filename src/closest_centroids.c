@@ -4,30 +4,33 @@
 #include "../headers/distance.h"
 #include "../headers/params.h"
 
-int closest_centroid(params_t* params, size_t start, size_t end, uint32_t* partial_sum){
-    uint32_t k = params->k;
+int closest_centroid(params_t *params, size_t start, size_t end, uint32_t *partial_sum)
+{
     // uint64_t num_points = params->npoints;
     point_list_t points = params->points_list;
     point_list_t centroids = params->centroids;
     squared_distance_func_t squared_distance_function = params->squared_distance_func;
     // Check for parameter and return -1 if there is a wrong parameter
-    if(centroids == NULL || points == NULL || params->cluster_ids == NULL) {
+    if (params->centroids == NULL || params->points_list == NULL || params->cluster_ids == NULL)
+    {
         return -1;
     }
 
     // Resets cluster counts and positions
     memset(partial_sum, 0, params->k * sizeof(uint32_t));
-    memset(params->cluster_means + start, end - start - 1, params->k * params->dimension * sizeof(uint32_t));
 
-    for(uint32_t i = start; i < end; i++) {   // For each point
-        point_ptr_t p = get_point(points, params->dimension, i);//&points[i];
+    for (uint32_t i = start; i < end; i++)
+    {                                                            // For each point
+        point_ptr_t p = get_point(points, params->dimension, i); //&points[i];
         uint64_t minDistance = UINT64_MAX;
 
-        for(uint32_t centroidIndex = 0; centroidIndex < k; centroidIndex++) {   // For each centroid
+        for (uint32_t centroidIndex = 0; centroidIndex < params->k; centroidIndex++)
+        { // For each centroid
             point_ptr_t c = get_point(centroids, params->dimension, centroidIndex);
             uint64_t dist;
 
-            switch (squared_distance_function) {
+            switch (squared_distance_function)
+            {
             case SQUARED_DISTANCE_MANHATTAN:
                 dist = squared_manhattan_distance(p, c, params->dimension);
                 break;
@@ -39,21 +42,34 @@ int closest_centroid(params_t* params, size_t start, size_t end, uint32_t* parti
                 break;
             }
 
-            if(dist < minDistance) {    // Update point clusterID if it's closer 
+            if (dist < minDistance)
+            { // Update point clusterID if it's closer
                 params->cluster_ids[i] = centroidIndex;
                 minDistance = dist;
             }
         }
 
-
         // Updates centroids coordinates
-        for(size_t d = 0; d < params->dimension; d++){
+        for (size_t d = 0; d < params->dimension; d++)
+        {
             get_point(params->cluster_means, params->dimension, params->cluster_ids[i])[d] += p[d];
         }
-        
+
         // Updates counter
         partial_sum[params->cluster_ids[i]]++;
     }
+
+    printf("psum: [");
+    for (int i = 0; i < params->k; i++)
+    {
+        printf("%d", partial_sum[i]);
+        if (i < params->k - 1)
+        {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+    fflush(stdout);
 
     return 0;
 }

@@ -4,22 +4,22 @@
 #include "../headers/closest_centroids.h"
 #include "../headers/update_centroids.h"
 
+pthread_barrier_t barrier;
+pthread_barrier_t barrier2;
+
 void *thread_function(void *args)
 {
     thread_data_t *data = (thread_data_t *)args;
 
-    while (!*data->cancel)
+    while (!(*data->cancel))
     {
-        printf("prepare [0]\n");
-        fflush(stdout);
+        printf("Loop\n");
         closest_centroid(data->params, data->start_idx, data->end_idx, data->partial_sum);
-        printf("prepare [1]\n");
-        fflush(stdout);
-        pthread_barrier_wait(data->barrier);
-        printf("waited [1]\n");
-        fflush(stdout);
+        pthread_barrier_wait(&barrier);
+        pthread_barrier_wait(&barrier2);
     }
 
+    free(data);
     pthread_exit(NULL);
 }
 
@@ -31,15 +31,21 @@ void kmeans(params_t *params)
 
     pthread_t *threads = malloc(sizeof(pthread_t) * (params->n_threads - 1));
     uint32_t *thread_sums = calloc(params->k * (params->n_threads - 1), sizeof(uint32_t));
+
+    printf("%d\n", params->k);
+
     assert(thread_sums != NULL && threads != NULL);
 
-    pthread_barrier_t barrier;
-    int res = pthread_barrier_init(&barrier, NULL, params->n_threads);
-    assert(res == 0);
+    assert(pthread_barrier_init(&barrier, NULL, params->n_threads) == 0);
+    assert(pthread_barrier_init(&barrier2, NULL, params->n_threads) == 0);
 
     uint64_t rem = params->npoints % (params->n_threads - 1);
     uint64_t range = params->npoints / (params->n_threads - 1);
     uint64_t last_end_idx = 0;
+
+    memset(params->cluster_means, 0, params->k * params->dimension * sizeof(int64_t));
+    memset(params->cluster_sizes, 0, params->k * sizeof(uint32_t));
+
     for (int i = 0; i < (params->n_threads - 1); i++)
     {
         int bonus = 0;
@@ -50,21 +56,27 @@ void kmeans(params_t *params)
             bonus = 1;
         }
 
-        thread_data_t data = {
-            .start_idx = last_end_idx,
-            .end_idx = range * (i + 1) + bonus,
-            .params = params,
-            .partial_sum = thread_sums + params->k * i,
-            .barrier = &barrier,
-            .cancel = &cancel};
+        thread_data_t *data = malloc(sizeof(thread_data_t));
+        assert(data != NULL);
 
-        last_end_idx = data.end_idx;
+        data->start_idx = last_end_idx;
+        data->end_idx = last_end_idx + range + bonus;
+        data->params = params;
+        data->partial_sum = thread_sums + params->k * i;
+        data->cancel = &cancel;
+        data->barrier = &barrier;
 
-        pthread_create(threads + i, NULL, thread_function, &data);
+        last_end_idx = data->end_idx;
+
+        printf("%ld - %ld\n", data->start_idx, data->end_idx);
+
+        pthread_create(threads + i, NULL, thread_function, data);
     }
 
     while (changed)
     {
+        memset(params->cluster_sizes, 0, params->k * sizeof(uint32_t));
+        memset(params->cluster_means, 0, params->k * params->dimension * sizeof(int64_t));
         pthread_barrier_wait(&barrier);
 
         printf("[");
@@ -77,6 +89,7 @@ void kmeans(params_t *params)
             }
         }
         printf("]\n");
+        fflush(stdout);
 
         // perform reduction
         for (int i = 0; i < params->n_threads - 1; i++)
@@ -89,12 +102,18 @@ void kmeans(params_t *params)
 
         changed = update_centroids(params);
 
-        memset(params->cluster_sizes, 0, params->k * sizeof(uint32_t));
+        pthread_barrier_wait(&barrier2);
     }
 
     cancel = true;
 
+    for (int i = 0; i < params->n_threads - 1; i++)
+    {
+        pthread_join(threads[i], NULL);
+    }
+
     pthread_barrier_destroy(&barrier);
+    pthread_barrier_destroy(&barrier2);
     free(threads);
     free(thread_sums);
 }
