@@ -159,6 +159,8 @@ int main(int argc, char *argv[]) {
 
     }
 
+    params.cluster_sums = malloc(params.k * params.dimension * sizeof(int64_t));
+
     for (int i = 0; i < n_comb ; i++) { // TODO replace with combinations()
         write_row_head_csv(&params, initial_centroids+(i*params.k*params.dimension));
         params.centroids = initial_centroids+(i*params.k*params.dimension);
@@ -167,6 +169,7 @@ int main(int argc, char *argv[]) {
     }
 
     free(initial_centroids);
+    free(params.cluster_sums);
     free_params_struct(&params);
 
 cleanup:

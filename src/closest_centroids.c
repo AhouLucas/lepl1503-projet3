@@ -4,7 +4,7 @@
 #include "../headers/distance.h"
 #include "../headers/params.h"
 
-int closest_centroid(params_t* params){
+int closest_centroid(params_t* params, size_t start, size_t end){
     uint32_t k = params->k;
     uint64_t num_points = params->npoints;
     point_list_t points = params->points_list;
@@ -15,11 +15,12 @@ int closest_centroid(params_t* params){
         return -1;
     }
 
-    int changed = 0;
+    // Resets cluster counts and positions
+    memset(params->cluster_sizes, 0, params->k * sizeof(uint32_t));
+    memset(params->cluster_sums, 0, params->k * params->dimension * sizeof(int64_t));
 
-    for(uint32_t i = 0; i < num_points; i++) {   // For each point
+    for(uint32_t i = start; i < end; i++) {   // For each point
         point_ptr_t p = get_point(points, params->dimension, i);//&points[i];
-        uint32_t oldClusterID = params->cluster_ids[i];  // Remember the old centroid to know if it has changed
         uint64_t minDistance = UINT64_MAX;
 
         for(uint32_t centroidIndex = 0; centroidIndex < k; centroidIndex++) {   // For each centroid
@@ -27,7 +28,7 @@ int closest_centroid(params_t* params){
             uint64_t dist;
 
             switch (squared_distance_function) {
-            case SQUARED_DISTANCE_MANHATTAN/* constant-expression */:
+            case SQUARED_DISTANCE_MANHATTAN:
                 dist = squared_manhattan_distance(p, c, params->dimension);
                 break;
             case SQUARED_DISTANCE_EUCLIDEAN:
@@ -43,10 +44,16 @@ int closest_centroid(params_t* params){
                 minDistance = dist;
             }
         }
-        if(params->cluster_ids[i] != oldClusterID) {
-            changed = 1;
+
+
+        // Updates centroids coordinates
+        for(size_t d = 0; d < params->dimension; d++){
+            get_point(params->cluster_sums, params->dimension, params->cluster_ids[i])[d] += p[d];
         }
+        
+        // Updates counter
+        params->cluster_sizes[params->cluster_ids[i]]++;
     }
 
-    return changed;
+    return 0;
 }

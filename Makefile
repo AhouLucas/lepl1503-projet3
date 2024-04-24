@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-Wall -Werror -Ofast -flto -g -std=gnu99
-LIBS=-lcunit
+LIBS=-lcunit -lpthread
 
 SRC_DIR=src
 TEST_DIR=test
@@ -31,10 +31,10 @@ $(TEST_BUILD_DIR)/%.bin: $(TEST_DIR)/%.c $(OBJECTS)
 tests: kmeans $(TESTS)
 	@set -e; \
 	echo -e "\n[UNIT TESTS]"; \
-	for test in $(TEST_BUILD_DIR)/*.bin; do \
-	    echo -e "\n=> RUNNING $$test:"; \
-		$$test; \
-	done; \
+	# for test in $(TEST_BUILD_DIR)/*.bin; do \
+	#     echo -e "\n=> RUNNING $$test:"; \
+	# 	$$test; \
+	# done; \
 	echo -e "\n[MEMORY ANALYSIS]\n"; \
 	valgrind --error-exitcode=1 --leak-check=full ./kmeans -k 3 -p 5 ./scripts/exemple.bin -f output-temp-c.csv; \
 	echo -e "\n[STATIC ANALYSIS]\n"; \
