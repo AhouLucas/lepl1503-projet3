@@ -26,7 +26,6 @@ void kmeans(params_t *params)
 {
     if (params->n_threads > 1)
     {
-        // greedy approach
         int changed = 1;
         bool cancel = false;
 
@@ -83,17 +82,6 @@ void kmeans(params_t *params)
             }
 
             changed = update_centroids(params);
-
-            // printf("centroid: [");
-            // for (int i = 0; i < params->k; i++)
-            // {
-            //     printf("%ld", params->centroids[i]);
-            //     if (i < params->k - 1)
-            //     {
-            //         printf(", ");
-            //     }
-            // }
-            // printf("]\n");
 
             memset(params->cluster_sizes, 0, params->k * sizeof(uint32_t));
             memset(params->cluster_means, 0, params->k * params->dimension * sizeof(int64_t));

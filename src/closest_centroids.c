@@ -21,7 +21,7 @@ int closest_centroid(params_t *params, size_t start, size_t end, uint32_t *parti
 
     for (uint32_t i = start; i < end; i++)
     {                                                            // For each point
-        point_ptr_t p = get_point(points, params->dimension, i); //&points[i];
+        point_ptr_t p = get_point(points, params->dimension, i);
         uint64_t minDistance = UINT64_MAX;
 
         for (uint32_t centroidIndex = 0; centroidIndex < params->k; centroidIndex++)
@@ -59,7 +59,6 @@ int closest_centroid(params_t *params, size_t start, size_t end, uint32_t *parti
         partial_sum[params->cluster_ids[i]]++;
     }
 
-    printf("psum: [");
     for (int i = 0; i < params->k; i++)
     {
         printf("%d", partial_sum[i]);
