@@ -13,7 +13,7 @@ int update_centroids(params_t* params) {
     for (size_t i = 0; i < params->k; i++) {
         for (size_t j = 0; j < params->dimension; j++) {
             int64_t mean = get_point(params->cluster_means, params->dimension, i)[j] / params->cluster_sizes[i];
-            changed = get_point(params->centroids, params->dimension, i)[j] != mean;
+            changed |= get_point(params->centroids, params->dimension, i)[j] != mean;
             get_point(params->centroids, params->dimension, i)[j] = mean;
         }
     }
