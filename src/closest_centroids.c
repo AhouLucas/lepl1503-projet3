@@ -59,16 +59,5 @@ int closest_centroid(params_t *params, size_t start, size_t end, uint32_t *parti
         partial_sum[params->cluster_ids[i]]++;
     }
 
-    for (int i = 0; i < params->k; i++)
-    {
-        printf("%d", partial_sum[i]);
-        if (i < params->k - 1)
-        {
-            printf(", ");
-        }
-    }
-    printf("]\n");
-    fflush(stdout);
-
     return 0;
 }

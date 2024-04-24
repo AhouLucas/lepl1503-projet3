@@ -135,6 +135,16 @@ int main(int argc, char *argv[]) {
         goto cleanup;
     }
 
+    if (params.n_first_initialization_points > params.npoints) {
+        free_params_struct(&params);
+
+        fprintf(stderr, "Cannot generate an instance of k-means with more initialization points than input points: %"PRIu32" > %"PRIu64"\n",
+                params.n_first_initialization_points, params.npoints);
+
+        result = EXIT_FAILURE;
+        goto cleanup;
+    }
+
     write_header_csv(&params);
 
     uint64_t n_comb = nbr_combinations(params.k, params.n_first_initialization_points);
