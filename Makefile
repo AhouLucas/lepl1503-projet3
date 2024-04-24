@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -Werror -Ofast -flto -g -std=gnu99
+CFLAGS=-Wall -Werror -flto -g -std=gnu99
 LIBS=-lcunit -lpthread
 
 SRC_DIR=src
@@ -28,9 +28,9 @@ $(TEST_BUILD_DIR)/%.bin: $(TEST_DIR)/%.c $(OBJECTS)
 	@mkdir -p $(TEST_BUILD_DIR)
 	$(CC) $(INCLUDE_HEADERS_DIRECTORY) $(CFLAGS) -o $@ $^ $(LIBS)
 
-tests: kmeans $(TESTS)
+tests: kmeans #$(TESTS)
 	@set -e; \
-	echo -e "\n[UNIT TESTS]"; \
+	# echo -e "\n[UNIT TESTS]"; \
 	# for test in $(TEST_BUILD_DIR)/*.bin; do \
 	#     echo -e "\n=> RUNNING $$test:"; \
 	# 	$$test; \

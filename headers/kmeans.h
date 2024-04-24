@@ -6,6 +6,14 @@
 #include "distance.h"
 #include "params.h"
 
+typedef struct {
+    params_t* params;
+    uint32_t* partial_sum;
+    size_t start_idx;
+    size_t end_idx;
+    pthread_barrier_t* barrier;
+} thread_data_t;
+
 /**
  * @brief Executes the k-means clustering algorithm.
  * 

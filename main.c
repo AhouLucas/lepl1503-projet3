@@ -23,7 +23,7 @@ static inline void parse_args(params_t *args, int argc, char *argv[]) {
     // the default values are the following, they will be changed depending on the arguments given to the program
     args->k = 2;
     args->n_first_initialization_points = args->k;
-    args->n_threads = 1;
+    args->n_threads = 4;
     args->output_stream = stdout;
     args->quiet = false;
     args->squared_distance_func = SQUARED_DISTANCE_MANHATTAN;
@@ -159,7 +159,7 @@ int main(int argc, char *argv[]) {
 
     }
 
-    params.cluster_sums = malloc(params.k * params.dimension * sizeof(int64_t));
+    params.cluster_means = malloc(params.k * params.dimension * sizeof(int64_t));
 
     for (int i = 0; i < n_comb ; i++) { // TODO replace with combinations()
         write_row_head_csv(&params, initial_centroids+(i*params.k*params.dimension));
@@ -169,7 +169,7 @@ int main(int argc, char *argv[]) {
     }
 
     free(initial_centroids);
-    free(params.cluster_sums);
+    free(params.cluster_means);
     free_params_struct(&params);
 
 cleanup:

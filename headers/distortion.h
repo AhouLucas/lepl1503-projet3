@@ -1,10 +1,6 @@
 #ifndef DISTORTION_H
 #define DISTORTION_H
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-
 #include "common.h"
 #include "params.h"
 

@@ -22,6 +22,6 @@
  * @param params The parameters containing the dataset, centroids, and assignments.
  * @return int Returns 0 if successful, and -1 if any of the centroids, points list, cluster IDs, or cluster sizes are NULL.
  */
-int update_centroids(params_t* params, size_t start, size_t end);
+int update_centroids(params_t* params);
 
 #endif // UPDATE_CENTROIDS_H

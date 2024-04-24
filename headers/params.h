@@ -1,7 +1,6 @@
 #ifndef PARAMS_H
 #define PARAMS_H
 
-#include <stdbool.h>
 #include "common.h"
 #include "point.h"
 #include "distance.h"

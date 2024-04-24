@@ -3,7 +3,7 @@
 #include "../headers/point.h"
 #include "../headers/params.h"
 
-int update_centroids(params_t* params, size_t start, size_t end) {
+int update_centroids(params_t* params) {
     if(params->centroids == NULL || params->points_list == NULL || params->cluster_ids == NULL || params->cluster_sizes == NULL){
         return -1;
     }
@@ -12,7 +12,7 @@ int update_centroids(params_t* params, size_t start, size_t end) {
 
     for (size_t i = 0; i < params->k; i++) {
         for (size_t j = 0; j < params->dimension; j++) {
-            int64_t mean = get_point(params->cluster_sums, params->dimension, i)[j] / params->cluster_sizes[i];
+            int64_t mean = get_point(params->cluster_means, params->dimension, i)[j] / params->cluster_sizes[i];
             changed = get_point(params->centroids, params->dimension, i)[j] != mean;
             get_point(params->centroids, params->dimension, i)[j] = mean;
         }

@@ -4,9 +4,9 @@
 #include "../headers/distance.h"
 #include "../headers/params.h"
 
-int closest_centroid(params_t* params, size_t start, size_t end){
+int closest_centroid(params_t* params, size_t start, size_t end, uint32_t* partial_sum){
     uint32_t k = params->k;
-    uint64_t num_points = params->npoints;
+    // uint64_t num_points = params->npoints;
     point_list_t points = params->points_list;
     point_list_t centroids = params->centroids;
     squared_distance_func_t squared_distance_function = params->squared_distance_func;
@@ -16,8 +16,8 @@ int closest_centroid(params_t* params, size_t start, size_t end){
     }
 
     // Resets cluster counts and positions
-    memset(params->cluster_sizes, 0, params->k * sizeof(uint32_t));
-    memset(params->cluster_sums, 0, params->k * params->dimension * sizeof(int64_t));
+    memset(partial_sum, 0, params->k * sizeof(uint32_t));
+    memset(params->cluster_means + start, end - start - 1, params->k * params->dimension * sizeof(uint32_t));
 
     for(uint32_t i = start; i < end; i++) {   // For each point
         point_ptr_t p = get_point(points, params->dimension, i);//&points[i];
@@ -48,11 +48,11 @@ int closest_centroid(params_t* params, size_t start, size_t end){
 
         // Updates centroids coordinates
         for(size_t d = 0; d < params->dimension; d++){
-            get_point(params->cluster_sums, params->dimension, params->cluster_ids[i])[d] += p[d];
+            get_point(params->cluster_means, params->dimension, params->cluster_ids[i])[d] += p[d];
         }
         
         // Updates counter
-        params->cluster_sizes[params->cluster_ids[i]]++;
+        partial_sum[params->cluster_ids[i]]++;
     }
 
     return 0;
