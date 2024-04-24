@@ -4,7 +4,7 @@
 #include "../headers/distance.h"
 #include "../headers/params.h"
 
-int closest_centroid(params_t *params, size_t start, size_t end, uint32_t *partial_sum)
+int closest_centroid(params_t *params, size_t start, size_t end, uint32_t *partial_sum, point_list_t partial_mean)
 {
     // uint64_t num_points = params->npoints;
     point_list_t points = params->points_list;
@@ -18,6 +18,7 @@ int closest_centroid(params_t *params, size_t start, size_t end, uint32_t *parti
 
     // Resets cluster counts and positions
     memset(partial_sum, 0, params->k * sizeof(uint32_t));
+    memset(partial_mean, 0, params->k * params->dimension * sizeof(int64_t));
 
     for (uint32_t i = start; i < end; i++)
     {                                                            // For each point
@@ -52,7 +53,7 @@ int closest_centroid(params_t *params, size_t start, size_t end, uint32_t *parti
         // Updates centroids coordinates
         for (size_t d = 0; d < params->dimension; d++)
         {
-            get_point(params->cluster_means, params->dimension, params->cluster_ids[i])[d] += p[d];
+            get_point(partial_mean, params->dimension, params->cluster_ids[i])[d] += p[d];
         }
 
         // Updates counter

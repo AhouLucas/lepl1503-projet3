@@ -13,7 +13,7 @@ void *thread_function(void *args)
 
     while (!(*data->cancel))
     {
-        closest_centroid(data->params, data->start_idx, data->end_idx, data->partial_sum);
+        closest_centroid(data->params, data->start_idx, data->end_idx, data->partial_sum, data->partial_mean);
         pthread_barrier_wait(&barrier);
         pthread_barrier_wait(&barrier2);
     }
@@ -31,6 +31,7 @@ void kmeans(params_t *params)
 
         pthread_t *threads = malloc(sizeof(pthread_t) * (params->n_threads - 1));
         uint32_t *thread_sums = calloc(params->k * (params->n_threads - 1), sizeof(uint32_t));
+        point_list_t thread_means = calloc(params->k * params->dimension * (params->n_threads - 1), sizeof(uint64_t));
 
         assert(thread_sums != NULL && threads != NULL);
 
@@ -61,6 +62,7 @@ void kmeans(params_t *params)
             data->end_idx = last_end_idx + range + bonus;
             data->params = params;
             data->partial_sum = thread_sums + params->k * i;
+            data->partial_mean = get_point(thread_means, params->dimension, params->k * i);
             data->cancel = &cancel;
             data->barrier = &barrier;
 
@@ -78,6 +80,11 @@ void kmeans(params_t *params)
                 for (int j = 0; j < params->k; j++)
                 {
                     params->cluster_sizes[j] += thread_sums[(params->k * i) + j];
+
+                    for (size_t d = 0; d < params->dimension; d++)
+                    {
+                        get_point(params->cluster_means, params->dimension, j)[d] += thread_means[((params->k * i) + j) * params->dimension + d];
+                    }
                 }
             }
 
@@ -100,6 +107,7 @@ void kmeans(params_t *params)
         pthread_barrier_destroy(&barrier2);
         free(threads);
         free(thread_sums);
+        free(thread_means);
     }
     else
     {
@@ -107,14 +115,14 @@ void kmeans(params_t *params)
 
         memset(params->cluster_sizes, 0, params->k * sizeof(uint32_t));
         memset(params->cluster_means, 0, params->k * params->dimension * sizeof(int64_t));
-        closest_centroid(params, 0, params->npoints, params->cluster_sizes);
+        closest_centroid(params, 0, params->npoints, params->cluster_sizes, params->cluster_means);
 
         while (has_changed)
         {
             has_changed = update_centroids(params);
             memset(params->cluster_sizes, 0, params->k * sizeof(uint32_t));
             memset(params->cluster_means, 0, params->k * params->dimension * sizeof(int64_t));
-            closest_centroid(params, 0, params->npoints, params->cluster_sizes);
+            closest_centroid(params, 0, params->npoints, params->cluster_sizes, params->cluster_means);
         }
     }
 }

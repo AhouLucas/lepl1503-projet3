@@ -9,6 +9,7 @@
 typedef struct {
     params_t* params;
     uint32_t* partial_sum;
+    point_list_t partial_mean;
     size_t start_idx;
     size_t end_idx;
     pthread_barrier_t* barrier;
